@@ -1,0 +1,92 @@
+name: Auto Update CHANGELOG
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Ensure only one CHANGELOG update workflow runs at a time
+concurrency:
+  group: changelog-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  changelog:
+    name: Update CHANGELOG
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch full history to generate changelog
+
+      # Check if the commit message contains [release]
+      - name: Check for release trigger
+        id: check_release
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MSG"
+          if [[ "$COMMIT_MSG" == *"[release]"* ]]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "✅ Found [release] tag, will create release PR"
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No [release] tag found, skipping release"
+          fi
+
+      - name: Create Release Pull Request or Update CHANGELOG
+        if: steps.check_release.outputs.should_release == 'true'
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          # Use config files (v4 format)
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # If PR created, add summary
+      - name: PR Summary
+        if: steps.check_release.outputs.should_release == 'true' && steps.release.outputs.prs_created == 'true'
+        env:
+          PRS_JSON: ${{ steps.release.outputs.prs }}
+        run: |
+          echo "### 📝 CHANGELOG Update PR Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "A CHANGELOG update PR has been created. Please review and merge it." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "$PRS_JSON" | jq -r '.[] | "- **PR #\(.number)**: \(.title)\n- **URL**: \(.html_url)"' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "After merging, the CHANGELOG.md will be automatically updated." >> $GITHUB_STEP_SUMMARY
+
+      # If PR merged, CHANGELOG updated
+      - name: CHANGELOG Updated Summary
+        if: steps.check_release.outputs.should_release == 'true' && steps.release.outputs.release_created
+        run: |
+          echo "### ✅ CHANGELOG Updated!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ steps.release.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Major**: ${{ steps.release.outputs.major }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Minor**: ${{ steps.release.outputs.minor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Patch**: ${{ steps.release.outputs.patch }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The CHANGELOG.md has been updated with the latest changes." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "You can manually create a GitHub Release if needed." >> $GITHUB_STEP_SUMMARY
+
+      # Skip message
+      - name: Skipped Summary
+        if: steps.check_release.outputs.should_release == 'false'
+        run: |
+          echo "### ℹ️  Release Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No \`[release]\` tag found in commit message." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "To trigger a release, include \`[release]\` in your commit message:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "git commit -m \"chore: prepare for release [release]\"" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

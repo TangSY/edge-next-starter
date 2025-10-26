@@ -1,0 +1,54 @@
+# Cloudflare local development configuration
+name = "cloudflare-worker-template"
+compatibility_date = "2024-11-11"
+compatibility_flags = ["nodejs_compat", "nodejs_als"]
+pages_build_output_dir = ".vercel/output/static"
+
+# D1 database binding - local development
+# With the --local flag, Wrangler auto-creates local SQLite files
+# No need to create a remote database
+[[d1_databases]]
+binding = "DB"
+database_name = "cloudflare-worker-template-local"
+database_id = "local"  # Local mode does not require a real database_id
+migrations_dir = "migrations"
+
+# R2 and KV are automatically simulated in local development; no creation needed
+# R2 bucket binding - local development (auto simulated)
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "cloudflare-worker-template-local"
+
+# KV namespace - local development (auto simulated)
+[[kv_namespaces]]
+binding = "KV"
+id = "local"  # Local mode does not require a real KV ID
+
+# Environment variables
+[vars]
+ENVIRONMENT = "local"
+NODE_ENV = "development"
+ANALYTICS_SINK = "log"
+
+# Rate limit configuration
+RATE_LIMIT_ENABLED = "true"
+RATE_LIMIT_MAX_REQUESTS = "100"
+RATE_LIMIT_WINDOW_SECONDS = "60"
+
+# Cloudflare Analytics configuration
+ANALYTICS_ENABLED = "true"
+
+# Logging configuration
+LOG_LEVEL = "INFO"
+LOG_FORMAT = "json"
+LOG_INCLUDE_TIMESTAMP = "true"
+
+# Database configuration
+DATABASE_QUERY_TIMEOUT = "5000"
+
+# Cache configuration
+CACHE_DEFAULT_TTL = "3600"
+
+# Performance monitoring configuration
+ENABLE_PERFORMANCE_MONITORING = "true"
+SLOW_QUERY_THRESHOLD_MS = "1000"

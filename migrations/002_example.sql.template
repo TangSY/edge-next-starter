@@ -1,0 +1,28 @@
+-- Migration: 002_example
+-- Description: Example migration file (rename and modify when used)
+-- Created: YYYY-MM-DD
+
+-- Example: add new column
+-- ALTER TABLE users ADD COLUMN avatar_url TEXT;
+
+-- Example: create new table
+-- CREATE TABLE IF NOT EXISTS comments (
+--   id INTEGER PRIMARY KEY AUTOINCREMENT,
+--   post_id INTEGER NOT NULL,
+--   user_id INTEGER NOT NULL,
+--   content TEXT NOT NULL,
+--   created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+--   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+--   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+-- );
+
+-- Example: create indexes
+-- CREATE INDEX IF NOT EXISTS idx_comments_post_id ON comments(post_id);
+-- CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comments(user_id);
+
+-- Notes:
+-- 1. Filename format: numeric_prefix_description.sql (e.g., 002_add_comments.sql)
+-- 2. Numeric prefix should increment (001, 002, 003...)
+-- 3. Use IF NOT EXISTS to ensure idempotency
+-- 4. Avoid dropping data or tables in migrations (be cautious in production)
+-- 5. Each migration should do one thing; keep it simple

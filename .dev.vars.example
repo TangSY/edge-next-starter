@@ -1,0 +1,12 @@
+# Local development environment variables
+# Note: These variables are for wrangler dev local development only
+# Do not commit sensitive information to version control
+
+# Cloudflare account info (for wrangler CLI)
+# CLOUDFLARE_ACCOUNT_ID=your-account-id
+# CLOUDFLARE_API_TOKEN=your-api-token
+
+# App environment
+ENVIRONMENT=development
+
+# Other local development variables...

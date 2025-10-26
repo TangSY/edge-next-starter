@@ -1,0 +1,27 @@
+# Cloudflare account ID
+name = "cloudflare-worker-template-test"
+compatibility_date = "2024-11-11"
+compatibility_flags = ["nodejs_compat", "nodejs_als"]
+pages_build_output_dir = ".vercel/output/static"
+
+# D1 database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "cloudflare-worker-template-test"
+database_id = "f2aae4f2-b6c6-434c-88a1-fe7667958bb7"
+migrations_dir = "migrations"
+
+# R2 bucket binding
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "cloudflare-worker-template-test"
+
+# KV namespace
+[[kv_namespaces]]
+binding = "KV"
+id = "d45eef82c64443939acaa1dc2b45aa95"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "test"
+ANALYTICS_SINK = "kv"

@@ -1,0 +1,41 @@
+// Prisma schema for Cloudflare D1
+// Note: D1 does not support Prisma Migrate
+// Manage database schema via Wrangler D1 migrations (migrations/*.sql)
+// Prisma is used only for type-safe queries
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"  // Used only for Prisma introspection; not actually used
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  createdAt Int      @default(dbgenerated("(strftime('%s', 'now'))")) @map("created_at")
+  updatedAt Int      @default(dbgenerated("(strftime('%s', 'now'))")) @map("updated_at")
+  posts     Post[]
+
+  @@index([email])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  userId    Int     @map("user_id")
+  title     String
+  content   String?
+  published Boolean @default(false)
+  createdAt Int     @default(dbgenerated("(strftime('%s', 'now'))")) @map("created_at")
+  updatedAt Int     @default(dbgenerated("(strftime('%s', 'now'))")) @map("updated_at")
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([published])
+  @@index([createdAt])
+  @@map("posts")
+}

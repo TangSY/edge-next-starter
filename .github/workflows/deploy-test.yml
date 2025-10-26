@@ -1,0 +1,101 @@
+name: Deploy to Test Environment
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [develop, preview]
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+
+jobs:
+  deploy-test:
+    name: Deploy to Cloudflare Pages (Test)
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment:
+      name: test
+      url: ${{ vars.TEST_DEPLOYMENT_URL || 'https://test.your-domain.com' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+
+      - name: Download build-artifacts from CI
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: .vercel/output/static
+
+      - name: Show downloaded artifact files (debug)
+        if: runner.debug == '1'
+        shell: bash
+        run: |
+          echo "Workspace root:" && pwd
+          echo "List root:" && ls -la . || true
+          echo "List .vercel/output:" && ls -la .vercel/output || true
+          echo "List .vercel/output/static:" && ls -la .vercel/output/static || true
+
+      - name: Validate build artifacts exist
+        shell: bash
+        run: |
+          if [ ! -d ".vercel/output/static" ] || [ -z "$(ls -A .vercel/output/static 2>/dev/null)" ]; then
+            echo "❌ Build artifacts not found at .vercel/output/static."
+            echo "Please ensure the CI workflow uploads 'build-artifacts' via actions/upload-artifact."
+            echo "CI must complete successfully before deploy triggers."
+            exit 1
+          fi
+
+      - name: Run database migrations (wrangler.test.toml)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 migrations apply cloudflare-worker-template-test --remote --config wrangler.test.toml
+
+      - name: Copy test config for Pages deployment
+        run: cp wrangler.test.toml wrangler.toml
+
+      - name: Deploy to Cloudflare Pages (Test)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .vercel/output/static --project-name=cloudflare-worker-template-test
+
+      - name: Get associated PR number
+        id: pr
+        if: github.event.workflow_run.event == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            const pullRequests = github.event.workflow_run.pull_requests;
+            if (pullRequests && pullRequests.length > 0) {
+              return pullRequests[0].number;
+            }
+            return '';
+
+      - name: Comment PR with deployment URL
+        if: steps.pr.outputs.result != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ steps.pr.outputs.result }};
+            const deploymentUrl = process.env.TEST_DEPLOYMENT_URL || 'https://test.your-domain.com';
+            github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Deployed to test environment!\n\nURL: ${deploymentUrl}\n\nCommit: ${context.payload.workflow_run.head_sha.substring(0, 7)}`
+            })
+        env:
+          TEST_DEPLOYMENT_URL: ${{ vars.TEST_DEPLOYMENT_URL }}

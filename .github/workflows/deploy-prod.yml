@@ -1,0 +1,81 @@
+name: Deploy to Production
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  deploy-production:
+    name: Deploy to Cloudflare Pages (Production)
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_DEPLOYMENT_URL || 'https://your-domain.com' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+
+      - name: Download build-artifacts from CI
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: .vercel/output/static
+
+      - name: Show downloaded artifact files (debug)
+        if: runner.debug == '1'
+        shell: bash
+        run: |
+          echo "Workspace root:" && pwd
+          echo "List root:" && ls -la . || true
+          echo "List .vercel/output:" && ls -la .vercel/output || true
+          echo "List .vercel/output/static:" && ls -la .vercel/output/static || true
+
+      - name: Validate build artifacts exist
+        shell: bash
+        run: |
+          if [ ! -d ".vercel/output/static" ] || [ -z "$(ls -A .vercel/output/static 2>/dev/null)" ]; then
+            echo "❌ Build artifacts not found at .vercel/output/static."
+            echo "Please ensure the CI workflow uploads 'build-artifacts' via actions/upload-artifact."
+            echo "CI must complete successfully before deploy triggers."
+            exit 1
+          fi
+
+      - name: Run database migrations (wrangler.prod.toml)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 migrations apply cloudflare-worker-template-prod --remote --config wrangler.prod.toml
+
+      - name: Copy production config for Pages deployment
+        run: cp wrangler.prod.toml wrangler.toml
+
+      - name: Deploy to Cloudflare Pages (Production)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .vercel/output/static --project-name=cloudflare-worker-template-prod --branch=main
+
+      - name: Create deployment summary
+        run: |
+          echo "### 🚀 Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: Production" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL**: ${{ vars.PRODUCTION_DEPLOYMENT_URL || 'https://your-domain.com' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY

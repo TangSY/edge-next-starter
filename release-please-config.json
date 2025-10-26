@@ -1,0 +1,33 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "cloudflare-worker-template",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false,
+      "draft": false,
+      "prerelease": false,
+      "skip-github-release": true,
+      "changelog-sections": [
+        { "type": "feat", "section": "✨ Features", "hidden": false },
+        { "type": "fix", "section": "🐛 Bug Fixes", "hidden": false },
+        { "type": "perf", "section": "⚡ Performance Improvements", "hidden": false },
+        { "type": "refactor", "section": "♻️ Code Refactoring", "hidden": false },
+        { "type": "docs", "section": "📝 Documentation", "hidden": false },
+        { "type": "style", "section": "💄 Styles", "hidden": false },
+        { "type": "test", "section": "✅ Tests", "hidden": false },
+        { "type": "build", "section": "📦 Build System", "hidden": false },
+        { "type": "ci", "section": "👷 CI/CD", "hidden": false },
+        { "type": "chore", "section": "🔧 Chores", "hidden": true }
+      ],
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "package.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    }
+  },
+  "bootstrap-sha": "56ac489f85e2c36c0f3f8d0c3b31e3b566e49b01"
+}

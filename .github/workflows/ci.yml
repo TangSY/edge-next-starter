@@ -3,8 +3,18 @@ name: CI
 on:
   push:
     branches: ['**']
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
   pull_request:
     branches: [main, develop]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
 
 # 确保同一分支只有一个 CI 运行，取消旧的运行
 concurrency:

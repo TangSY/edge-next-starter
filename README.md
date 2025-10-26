@@ -1,3 +1,7 @@
+English | [简体中文](./README-zh.md)
+
+---
+
 # Next.js + Cloudflare Full‑Stack Starter
 
 An out‑of‑the‑box Next.js + Cloudflare full‑stack starter integrating Edge Runtime, D1 database, R2 storage, KV cache, Analytics Engine hooks, and a complete CI/CD pipeline.

@@ -1,3 +1,7 @@
+[English](./README.md) | 简体中文
+
+---
+
 # Next.js + Cloudflare 全栈模板
 
 一个开箱即用的 Next.js + Cloudflare 全栈项目模板，集成 Edge Runtime、D1 数据库、R2 存储、Analytics Engine 事件分析和完整的 CI/CD 流程。

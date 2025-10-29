@@ -58,9 +58,6 @@ devDependencies:
   '@testing-library/react':
     specifier: ^16.3.0
     version: 16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
-  '@types/bcryptjs':
-    specifier: ^3.0.0
-    version: 3.0.0
   '@types/node':
     specifier: ^20.17.13
     version: 20.19.21
@@ -79,9 +76,6 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.21
     version: 10.4.21(postcss@8.5.6)
-  bcryptjs:
-    specifier: ^3.0.2
-    version: 3.0.2
   eslint:
     specifier: ^9.37.0
     version: 9.37.0
@@ -2183,13 +2177,6 @@ packages:
       '@babel/types': 7.28.4
     dev: true
 
-  /@types/bcryptjs@3.0.0:
-    resolution: {integrity: sha512-WRZOuCuaz8UcZZE4R5HXTco2goQSI2XxjGY3hbM/xDvwmqFWd4ivooImsMx65OKM6CtNKbnZ5YL+YwAwK7c1dg==}
-    deprecated: This is a stub types definition. bcryptjs provides its own type definitions, so you do not need this installed.
-    dependencies:
-      bcryptjs: 3.0.2
-    dev: true
-
   /@types/chai@5.2.2:
     resolution: {integrity: sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg==}
     dependencies:
@@ -2909,11 +2896,6 @@ packages:
   /baseline-browser-mapping@2.8.17:
     resolution: {integrity: sha512-j5zJcx6golJYTG6c05LUZ3Z8Gi+M62zRT/ycz4Xq4iCOdpcxwg7ngEYD4KA0eWZC7U17qh/Smq8bYbACJ0ipBA==}
     hasBin: true
-
-  /bcryptjs@3.0.2:
-    resolution: {integrity: sha512-k38b3XOZKv60C4E2hVsXTolJWfkGRMbILBIe2IBITXciy5bOsTKot5kDrf3ZfufQtQOUN5mXceUEpU1rTl9Uog==}
-    hasBin: true
-    dev: true
 
   /bidi-js@1.0.3:
     resolution: {integrity: sha512-RKshQI1R3YQ+n9YJz2QQ147P66ELpa1FQEg20Dk8oW9t2KgLbpDLLp9aGZ7y8WHSshDknG0bknqGw5/tyCs5tw==}

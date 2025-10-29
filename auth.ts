@@ -7,7 +7,7 @@ import NextAuth from 'next-auth';
 import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
-import { compare } from 'bcryptjs';
+import { verifyPassword } from '@/lib/auth/password';
 import { prisma } from '@/lib/db/client';
 import { PrismaAdapter } from '@/lib/auth/adapter';
 
@@ -62,7 +62,7 @@ export const authConfig: NextAuthConfig = {
           throw new Error('Invalid email or password');
         }
 
-        const isPasswordValid = await compare(credentials.password as string, user.password);
+        const isPasswordValid = await verifyPassword(credentials.password as string, user.password);
 
         if (!isPasswordValid) {
           throw new Error('Invalid email or password');

@@ -1,17 +1,15 @@
 /**
  * User Registration API
  * Handles new user registration requests
- *
- * Note: Uses Node.js runtime to support bcryptjs password encryption
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { hash } from 'bcryptjs';
+import { hashPassword } from '@/lib/auth/password';
 import { prisma } from '@/lib/db/client';
 import { z } from 'zod';
 
-// Use Node.js runtime (required by bcryptjs)
-export const runtime = 'nodejs';
+// Use Edge runtime (compatible with Web Crypto API)
+export const runtime = 'edge';
 
 // Registration request validation schema
 const registerSchema = z.object({
@@ -37,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash password
-    const hashedPassword = await hash(validatedData.password, 12);
+    const hashedPassword = await hashPassword(validatedData.password);
 
     // Create user
     const user = await prisma.user.create({

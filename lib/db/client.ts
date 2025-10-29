@@ -25,6 +25,7 @@ export function getCloudflareEnv(): CloudflareEnv | null {
 
   // Check whether running in Cloudflare environment
   if (!env || typeof env.DB === 'undefined') {
+    console.warn('Cloudflare bindings not available. Running in local mode?');
     return null;
   }
 

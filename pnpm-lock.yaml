@@ -17,9 +17,6 @@ dependencies:
   '@radix-ui/react-slot':
     specifier: ^1.2.3
     version: 1.2.3(@types/react@19.2.2)(react@19.2.0)
-  bcryptjs:
-    specifier: ^3.0.2
-    version: 3.0.2
   class-variance-authority:
     specifier: ^0.7.1
     version: 0.7.1
@@ -82,6 +79,9 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.21
     version: 10.4.21(postcss@8.5.6)
+  bcryptjs:
+    specifier: ^3.0.2
+    version: 3.0.2
   eslint:
     specifier: ^9.37.0
     version: 9.37.0
@@ -2913,6 +2913,7 @@ packages:
   /bcryptjs@3.0.2:
     resolution: {integrity: sha512-k38b3XOZKv60C4E2hVsXTolJWfkGRMbILBIe2IBITXciy5bOsTKot5kDrf3ZfufQtQOUN5mXceUEpU1rTl9Uog==}
     hasBin: true
+    dev: true
 
   /bidi-js@1.0.3:
     resolution: {integrity: sha512-RKshQI1R3YQ+n9YJz2QQ147P66ELpa1FQEg20Dk8oW9t2KgLbpDLLp9aGZ7y8WHSshDknG0bknqGw5/tyCs5tw==}

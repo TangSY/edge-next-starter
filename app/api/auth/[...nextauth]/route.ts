@@ -1,13 +1,13 @@
 /**
- * NextAuth API 路由处理器
- * 处理所有认证相关的 API 请求
+ * NextAuth API Route Handler
+ * Handles all authentication-related API requests
  *
- * 注意：使用 Node.js 运行时以支持 bcryptjs 密码加密
+ * Note: Uses Node.js runtime to support bcryptjs password encryption
  */
 
 import { handlers } from '@/auth';
 
-// 使用 Node.js 运行时（bcryptjs 需要）
+// Use Node.js runtime (required by bcryptjs)
 export const runtime = 'nodejs';
 
 export const { GET, POST } = handlers;

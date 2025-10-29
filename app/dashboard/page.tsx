@@ -1,6 +1,6 @@
 /**
- * 受保护的示例页面 - 仪表板
- * 仅已登录用户可访问
+ * Protected Example Page - Dashboard
+ * Only accessible to logged-in users
  */
 
 import { auth } from '@/auth';
@@ -21,14 +21,14 @@ export default async function DashboardPage() {
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">仪表板</h1>
+            <h1 className="text-3xl font-bold">Dashboard</h1>
             <p className="text-muted-foreground mt-2">
-              欢迎回来, {session.user.name || session.user.email}!
+              Welcome back, {session.user.name || session.user.email}!
             </p>
           </div>
           <form action="/api/auth/signout" method="POST">
             <Button type="submit" variant="outline">
-              退出登录
+              Sign Out
             </Button>
           </form>
         </div>
@@ -36,20 +36,20 @@ export default async function DashboardPage() {
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>用户信息</CardTitle>
-              <CardDescription>您的账户详情</CardDescription>
+              <CardTitle>User Information</CardTitle>
+              <CardDescription>Your account details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               <div>
-                <span className="text-sm font-medium">邮箱:</span>
+                <span className="text-sm font-medium">Email:</span>
                 <p className="text-muted-foreground">{session.user.email}</p>
               </div>
               <div>
-                <span className="text-sm font-medium">用户名:</span>
-                <p className="text-muted-foreground">{session.user.name || '未设置'}</p>
+                <span className="text-sm font-medium">Username:</span>
+                <p className="text-muted-foreground">{session.user.name || 'Not set'}</p>
               </div>
               <div>
-                <span className="text-sm font-medium">用户 ID:</span>
+                <span className="text-sm font-medium">User ID:</span>
                 <p className="text-muted-foreground">{session.user.id}</p>
               </div>
             </CardContent>
@@ -57,15 +57,15 @@ export default async function DashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>快速操作</CardTitle>
-              <CardDescription>常用功能</CardDescription>
+              <CardTitle>Quick Actions</CardTitle>
+              <CardDescription>Common functions</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button variant="outline" className="w-full justify-start" asChild>
-                <Link href="/profile">编辑个人资料</Link>
+                <Link href="/profile">Edit Profile</Link>
               </Button>
               <Button variant="outline" className="w-full justify-start" asChild>
-                <Link href="/">返回首页</Link>
+                <Link href="/">Back to Home</Link>
               </Button>
             </CardContent>
           </Card>
@@ -73,8 +73,8 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>会话信息</CardTitle>
-            <CardDescription>当前登录会话详情</CardDescription>
+            <CardTitle>Session Information</CardTitle>
+            <CardDescription>Current login session details</CardDescription>
           </CardHeader>
           <CardContent>
             <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">

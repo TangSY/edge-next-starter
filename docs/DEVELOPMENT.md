@@ -2,7 +2,7 @@
 
 This guide helps you quickly master the project’s development workflow and best practices.
 
-## 🏗️ 项目架构
+## 🏗️ Project Architecture
 
 ### Tech Stack
 
@@ -82,7 +82,7 @@ pnpm run test:coverage
 
 ### API Route Example
 
-在 `app/api/` 下创建新的 API 路由：
+Create new API routes under `app/api/`:
 
 ```typescript
 // app/api/example/route.ts
@@ -323,7 +323,7 @@ By default, GitHub restricts Actions from creating pull requests for security. O
 ### View logs
 
 ```bash
-# 实时查看 Cloudflare Workers 日志
+# View Cloudflare Workers logs in real-time
 wrangler tail
 ```
 

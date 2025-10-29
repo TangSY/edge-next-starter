@@ -1,6 +1,6 @@
 /**
- * NextAuth 认证配置
- * 支持凭证登录（邮箱+密码）和 Google OAuth
+ * NextAuth Authentication Configuration
+ * Supports credentials login (email + password) and Google OAuth
  */
 
 import NextAuth from 'next-auth';
@@ -14,25 +14,25 @@ import { PrismaAdapter } from '@/lib/auth/adapter';
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
 
-  // 会话策略：使用 JWT（适合 Edge Runtime）
+  // Session strategy: Use JWT (suitable for Edge Runtime)
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 天
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
-  // 自定义页面路径
+  // Custom page paths
   pages: {
     signIn: '/login',
     error: '/login',
   },
 
-  // 认证提供商配置
+  // Authentication providers configuration
   providers: [
-    // Google OAuth 登录
+    // Google OAuth login
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // Google 允许的授权范围
+      // Google authorization scopes
       authorization: {
         params: {
           prompt: 'consent',
@@ -42,16 +42,16 @@ export const authConfig: NextAuthConfig = {
       },
     }),
 
-    // 凭证登录（邮箱+密码）
+    // Credentials login (email + password)
     Credentials({
       name: 'credentials',
       credentials: {
-        email: { label: '邮箱', type: 'email' },
-        password: { label: '密码', type: 'password' },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('请提供邮箱和密码');
+          throw new Error('Please provide email and password');
         }
 
         const user = await prisma.user.findUnique({
@@ -59,13 +59,13 @@ export const authConfig: NextAuthConfig = {
         });
 
         if (!user || !user.password) {
-          throw new Error('邮箱或密码错误');
+          throw new Error('Invalid email or password');
         }
 
         const isPasswordValid = await compare(credentials.password as string, user.password);
 
         if (!isPasswordValid) {
-          throw new Error('邮箱或密码错误');
+          throw new Error('Invalid email or password');
         }
 
         return {
@@ -78,10 +78,10 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
 
-  // 回调函数配置
+  // Callback functions configuration
   callbacks: {
     async jwt({ token, user }) {
-      // 首次登录时，将用户信息添加到 token
+      // On first login, add user information to token
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -92,7 +92,7 @@ export const authConfig: NextAuthConfig = {
     },
 
     async session({ session, token }) {
-      // 将 token 中的信息传递给 session
+      // Pass token information to session
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
@@ -103,7 +103,7 @@ export const authConfig: NextAuthConfig = {
     },
   },
 
-  // 调试模式（生产环境应设为 false）
+  // Debug mode (should be false in production)
   debug: process.env.NODE_ENV === 'development',
 };
 

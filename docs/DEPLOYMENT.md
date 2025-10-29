@@ -92,9 +92,9 @@ git push origin main
 ### Manual
 
 ```bash
-pnpm run pages:deploy        # 开发环境
-pnpm run pages:deploy:test   # 测试环境
-pnpm run pages:deploy:prod   # 生产环境
+pnpm run pages:deploy
+pnpm run pages:deploy:test
+pnpm run pages:deploy:prod
 ```
 
 ## 🔄 CI/CD
@@ -110,13 +110,13 @@ On push: tests → ESLint → type‑check → format check → build
 
 ## 🌐 Custom Domains
 
-1. Cloudflare Dashboard → Pages → 项目 → Custom domains
-2. Add domain 并按提示配置 DNS
-3. SSL/TLS 证书自动提供
+1. Cloudflare Dashboard → Pages → project → Custom domains
+2. Add domain and configure DNS as prompted
+3. SSL/TLS certificate is provided automatically
 
 ## 📊 Environment Variables
 
-在 Cloudflare Dashboard → Pages → 项目 → Settings → Environment variables 中为不同环境（Production/Preview）添加变量。
+Add variables for different environments (Production/Preview) in Cloudflare Dashboard → Pages → project → Settings → Environment variables.
 
 ## 🔍 Monitoring & Logs
 

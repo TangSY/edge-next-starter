@@ -1,6 +1,6 @@
 /**
- * 注册页面
- * 提供新用户注册功能
+ * Registration Page
+ * Provides new user registration functionality
  */
 
 'use client';
@@ -36,15 +36,15 @@ export default function RegisterPage() {
     const confirmPassword = formData.get('confirmPassword') as string;
     const name = formData.get('name') as string;
 
-    // 客户端验证
+    // Client-side validation
     if (password !== confirmPassword) {
-      setError('两次输入的密码不一致');
+      setError('Passwords do not match');
       setIsLoading(false);
       return;
     }
 
     if (password.length < 8) {
-      setError('密码至少需要 8 个字符');
+      setError('Password must be at least 8 characters');
       setIsLoading(false);
       return;
     }
@@ -59,15 +59,15 @@ export default function RegisterPage() {
       const data = (await response.json()) as { error?: string; message?: string };
 
       if (!response.ok) {
-        setError(data.error || '注册失败');
+        setError(data.error || 'Registration failed');
         return;
       }
 
-      // 注册成功，跳转到登录页
+      // Registration successful, redirect to login page
       router.push('/login?registered=true');
     } catch (err) {
-      setError('注册失败，请稍后重试');
-      console.error('注册错误:', err);
+      setError('Registration failed, please try again later');
+      console.error('Registration error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -77,8 +77,8 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">注册</CardTitle>
-          <CardDescription>创建一个新账户以开始使用</CardDescription>
+          <CardTitle className="text-2xl font-bold">Sign Up</CardTitle>
+          <CardDescription>Create a new account to get started</CardDescription>
         </CardHeader>
         <form onSubmit={onSubmit}>
           <CardContent className="space-y-4">
@@ -88,11 +88,17 @@ export default function RegisterPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="name">用户名</Label>
-              <Input id="name" name="name" type="text" placeholder="张三" disabled={isLoading} />
+              <Label htmlFor="name">Username</Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="John Doe"
+                disabled={isLoading}
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">邮箱</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 name="email"
@@ -103,23 +109,23 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">密码</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 name="password"
                 type="password"
-                placeholder="至少 8 个字符"
+                placeholder="At least 8 characters"
                 required
                 disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">确认密码</Label>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                placeholder="再次输入密码"
+                placeholder="Re-enter password"
                 required
                 disabled={isLoading}
               />
@@ -127,12 +133,12 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? '注册中...' : '注册'}
+              {isLoading ? 'Signing up...' : 'Sign Up'}
             </Button>
             <div className="text-sm text-muted-foreground text-center">
-              已有账户？{' '}
+              Already have an account?{' '}
               <Link href="/login" className="text-primary hover:underline">
-                立即登录
+                Login now
               </Link>
             </div>
           </CardFooter>

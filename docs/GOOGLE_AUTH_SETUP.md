@@ -1,186 +1,186 @@
-# Google OAuth 登录配置指南
+# Google OAuth Login Setup Guide
 
-## 配置步骤
+## Configuration Steps
 
-### 1. 创建 Google Cloud 项目
+### 1. Create a Google Cloud Project
 
-1. 访问 [Google Cloud Console](https://console.cloud.google.com/)
-2. 点击"选择项目" → "新建项目"
-3. 输入项目名称（如 "edge-next-starter"）
-4. 点击"创建"
+1. Visit [Google Cloud Console](https://console.cloud.google.com/)
+2. Click "Select a project" → "New Project"
+3. Enter project name (e.g., "edge-next-starter")
+4. Click "Create"
 
-### 2. 启用 Google+ API
+### 2. Enable Google+ API
 
-1. 在左侧菜单中，选择"API 和服务" → "库"
-2. 搜索 "Google+ API"
-3. 点击"启用"
+1. In the left menu, select "APIs & Services" → "Library"
+2. Search for "Google+ API"
+3. Click "Enable"
 
-### 3. 创建 OAuth 2.0 凭据
+### 3. Create OAuth 2.0 Credentials
 
-1. 在左侧菜单中，选择"API 和服务" → "凭据"
-2. 点击"创建凭据" → "OAuth 客户端 ID"
-3. 如果是首次创建，需要先配置"OAuth 同意屏幕"：
-   - 用户类型：外部
-   - 应用名称：edge-next-starter
-   - 用户支持电子邮件：你的邮箱
-   - 开发者联系信息：你的邮箱
-   - 点击"保存并继续"
-   - 作用域：不需要添加，直接"保存并继续"
-   - 测试用户：添加你的 Google 账号用于测试
-   - 点击"保存并继续"
+1. In the left menu, select "APIs & Services" → "Credentials"
+2. Click "Create Credentials" → "OAuth client ID"
+3. If this is your first time, you'll need to configure the "OAuth consent screen":
+   - User type: External
+   - App name: edge-next-starter
+   - User support email: your email
+   - Developer contact information: your email
+   - Click "Save and Continue"
+   - Scopes: No need to add, click "Save and Continue"
+   - Test users: Add your Google account for testing
+   - Click "Save and Continue"
 
-4. 返回"凭据"页面，点击"创建凭据" → "OAuth 客户端 ID"
-5. 应用类型：Web 应用
-6. 名称：edge-next-starter-web
-7. 已获授权的 JavaScript 来源：
+4. Return to the "Credentials" page, click "Create Credentials" → "OAuth client ID"
+5. Application type: Web application
+6. Name: edge-next-starter-web
+7. Authorized JavaScript origins:
    ```
    http://localhost:3000
    https://your-production-domain.com
    ```
-8. 已获授权的重定向 URI：
+8. Authorized redirect URIs:
    ```
    http://localhost:3000/api/auth/callback/google
    https://your-production-domain.com/api/auth/callback/google
    ```
-9. 点击"创建"
-10. **复制客户端 ID 和客户端密钥**
+9. Click "Create"
+10. **Copy the Client ID and Client Secret**
 
-### 4. 配置环境变量
+### 4. Configure Environment Variables
 
-编辑 `.env.local` 文件：
+Edit your `.env.local` file:
 
 ```bash
-# 取消注释并填入你的凭据
-GOOGLE_CLIENT_ID=你的客户端ID
-GOOGLE_CLIENT_SECRET=你的客户端密钥
+# Uncomment and fill in your credentials
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
 ```
 
-### 5. 测试登录
+### 5. Test the Login
 
-1. 启动开发服务器：
+1. Start the development server:
 
    ```bash
    pnpm dev
    ```
 
-2. 访问登录页面：http://localhost:3000/login
+2. Visit the login page: http://localhost:3000/login
 
-3. 点击 "Google" 按钮
+3. Click the "Google" button
 
-4. 选择你的 Google 账号登录
+4. Select your Google account to sign in
 
-5. 首次登录会提示授权，点击"允许"
+5. First-time login will prompt for authorization, click "Allow"
 
-6. 登录成功后会跳转到首页
+6. After successful login, you'll be redirected to the homepage
 
-## 数据流程
+## Data Flow
 
 ```
-用户点击 Google 登录
+User clicks Google login
     ↓
-跳转到 Google 登录页面
+Redirect to Google login page
     ↓
-用户授权
+User authorizes
     ↓
-Google 回调 /api/auth/callback/google
+Google callback to /api/auth/callback/google
     ↓
-NextAuth 处理回调
+NextAuth processes callback
     ↓
-在 accounts 表创建记录
+Create record in accounts table
     ↓
-在 users 表创建/查找用户
+Create/find user in users table
     ↓
-创建 JWT 会话
+Create JWT session
     ↓
-跳转到首页
+Redirect to homepage
 ```
 
-## 数据库变化
+## Database Changes
 
-首次 Google 登录会在数据库中创建：
+First-time Google login creates records in the database:
 
-**users 表**：
+**users table**:
 
 ```sql
 INSERT INTO users (email, name, image, email_verified)
 VALUES ('user@gmail.com', 'User Name', 'https://...', 1234567890);
 ```
 
-**accounts 表**：
+**accounts table**:
 
 ```sql
 INSERT INTO accounts (user_id, type, provider, provider_account_id, ...)
 VALUES (1, 'oauth', 'google', '1234567890', ...);
 ```
 
-## 常见问题
+## Common Issues
 
-### 1. 错误：redirect_uri_mismatch
+### 1. Error: redirect_uri_mismatch
 
-**原因**：重定向 URI 不匹配
+**Cause**: Redirect URI doesn't match
 
-**解决**：
+**Solution**:
 
-- 检查 Google Console 中的重定向 URI 是否包含：
+- Check if the redirect URI in Google Console includes:
   ```
   http://localhost:3000/api/auth/callback/google
   ```
-- 确保 `.env.local` 中的 `NEXTAUTH_URL` 正确
+- Ensure `NEXTAUTH_URL` in `.env.local` is correct
 
-### 2. 错误：access_denied
+### 2. Error: access_denied
 
-**原因**：用户未授权或未添加到测试用户列表
+**Cause**: User not authorized or not added to test user list
 
-**解决**：
+**Solution**:
 
-- 在 OAuth 同意屏幕中添加你的 Google 账号为测试用户
+- Add your Google account as a test user in the OAuth consent screen
 
-### 3. 登录成功但没有跳转
+### 3. Login successful but no redirect
 
-**原因**：`NEXTAUTH_URL` 配置错误
+**Cause**: `NEXTAUTH_URL` configuration error
 
-**解决**：
+**Solution**:
 
-- 确保 `.env.local` 中配置：
+- Ensure `.env.local` is configured with:
   ```
   NEXTAUTH_URL=http://localhost:3000
   ```
 
-### 4. 生产环境部署
+### 4. Production Deployment
 
-部署到生产环境时：
+When deploying to production:
 
-1. 在 Google Console 添加生产域名：
+1. Add production domain in Google Console:
 
    ```
    https://your-domain.com
    https://your-domain.com/api/auth/callback/google
    ```
 
-2. 在 Cloudflare Pages 环境变量中配置：
+2. Configure environment variables in Cloudflare Pages:
    ```
    NEXTAUTH_URL=https://your-domain.com
-   GOOGLE_CLIENT_ID=你的客户端ID
-   GOOGLE_CLIENT_SECRET=你的客户端密钥
+   GOOGLE_CLIENT_ID=your-client-id
+   GOOGLE_CLIENT_SECRET=your-client-secret
    ```
 
-## 安全建议
+## Security Recommendations
 
-1. **不要提交凭据**：
-   - `.env.local` 已在 `.gitignore` 中
-   - 永远不要将凭据提交到 Git
+1. **Don't commit credentials**:
+   - `.env.local` is already in `.gitignore`
+   - Never commit credentials to Git
 
-2. **定期轮换密钥**：
-   - 建议每 6 个月轮换一次客户端密钥
+2. **Rotate keys regularly**:
+   - Recommend rotating client secret every 6 months
 
-3. **限制作用域**：
-   - 只请求必要的权限（当前仅请求基本信息）
+3. **Limit scopes**:
+   - Only request necessary permissions (currently only basic info)
 
-4. **监控异常登录**：
-   - 在 Google Console 中监控 API 使用情况
+4. **Monitor suspicious logins**:
+   - Monitor API usage in Google Console
 
-## 参考文档
+## Reference Documentation
 
 - [NextAuth Google Provider](https://authjs.dev/getting-started/providers/google)
-- [Google OAuth 文档](https://developers.google.com/identity/protocols/oauth2)
+- [Google OAuth Documentation](https://developers.google.com/identity/protocols/oauth2)
 - [Google Cloud Console](https://console.cloud.google.com/)

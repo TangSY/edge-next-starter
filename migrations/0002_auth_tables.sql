@@ -2,12 +2,12 @@
 -- Description: Add NextAuth authentication tables and fields
 -- Created: 2025-10-29
 
--- 添加认证相关字段到 users 表
+-- Add authentication-related fields to users table
 ALTER TABLE users ADD COLUMN password TEXT;
 ALTER TABLE users ADD COLUMN email_verified INTEGER;
 ALTER TABLE users ADD COLUMN image TEXT;
 
--- 创建 accounts 表（OAuth 账户）
+-- Create accounts table (OAuth accounts)
 CREATE TABLE IF NOT EXISTS accounts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 
 CREATE INDEX IF NOT EXISTS idx_accounts_user_id ON accounts(user_id);
 
--- 创建 sessions 表（会话管理）
+-- Create sessions table (session management)
 CREATE TABLE IF NOT EXISTS sessions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   session_token TEXT NOT NULL UNIQUE,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 
--- 创建 verification_tokens 表（邮箱验证令牌）
+-- Create verification_tokens table (email verification tokens)
 CREATE TABLE IF NOT EXISTS verification_tokens (
   identifier TEXT NOT NULL,
   token TEXT NOT NULL UNIQUE,

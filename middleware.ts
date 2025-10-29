@@ -1,6 +1,6 @@
 /**
- * NextAuth 中间件
- * 用于保护需要认证的路由
+ * NextAuth Middleware
+ * Protects routes that require authentication
  */
 
 import { auth } from '@/auth';
@@ -12,13 +12,13 @@ export default auth(req => {
   const isAuthPage =
     req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/register');
 
-  // 如果用户已登录，访问登录/注册页面时重定向到首页
+  // If user is authenticated, redirect to home when accessing login/register pages
   if (isAuthenticated && isAuthPage) {
     return NextResponse.redirect(new URL('/', req.url));
   }
 
-  // 如果用户未登录，访问受保护页面时重定向到登录页
-  // 根据需要添加需要保护的路由
+  // If user is not authenticated, redirect to login when accessing protected pages
+  // Add protected routes as needed
   const protectedPaths = ['/dashboard', '/profile'];
   const isProtectedPath = protectedPaths.some(path => req.nextUrl.pathname.startsWith(path));
 
@@ -31,15 +31,15 @@ export default auth(req => {
   return NextResponse.next();
 });
 
-// 配置需要运行中间件的路由
+// Configure routes where middleware should run
 export const config = {
   matcher: [
     /*
-     * 匹配所有路径除了:
-     * - _next/static (静态文件)
-     * - _next/image (图片优化文件)
-     * - favicon.ico (favicon 文件)
-     * - public 文件夹中的文件
+     * Match all paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - files in the public folder
      */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],

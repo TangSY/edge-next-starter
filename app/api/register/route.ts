@@ -1,8 +1,8 @@
 /**
- * 用户注册 API
- * 处理新用户注册请求
+ * User Registration API
+ * Handles new user registration requests
  *
- * 注意：使用 Node.js 运行时以支持 bcryptjs 密码加密
+ * Note: Uses Node.js runtime to support bcryptjs password encryption
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -10,36 +10,36 @@ import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/db/client';
 import { z } from 'zod';
 
-// 使用 Node.js 运行时（bcryptjs 需要）
+// Use Node.js runtime (required by bcryptjs)
 export const runtime = 'nodejs';
 
-// 注册请求验证 schema
+// Registration request validation schema
 const registerSchema = z.object({
-  email: z.string().email('请提供有效的邮箱地址'),
-  password: z.string().min(8, '密码至少需要 8 个字符'),
-  name: z.string().min(1, '请提供用户名').optional(),
+  email: z.string().email('Please provide a valid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  name: z.string().min(1, 'Please provide a username').optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // 验证请求数据
+    // Validate request data
     const validatedData = registerSchema.parse(body);
 
-    // 检查用户是否已存在
+    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email: validatedData.email },
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: '该邮箱已被注册' }, { status: 400 });
+      return NextResponse.json({ error: 'This email is already registered' }, { status: 400 });
     }
 
-    // 加密密码
+    // Hash password
     const hashedPassword = await hash(validatedData.password, 12);
 
-    // 创建用户
+    // Create user
     const user = await prisma.user.create({
       data: {
         email: validatedData.email,
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: '注册成功',
+        message: 'Registration successful',
         user: {
           ...user,
           createdAt: new Date(user.createdAt * 1000).toISOString(),
@@ -67,10 +67,16 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const firstError = error.issues[0];
-      return NextResponse.json({ error: firstError?.message || '验证失败' }, { status: 400 });
+      return NextResponse.json(
+        { error: firstError?.message || 'Validation failed' },
+        { status: 400 }
+      );
     }
 
-    console.error('注册错误:', error);
-    return NextResponse.json({ error: '注册失败，请稍后重试' }, { status: 500 });
+    console.error('Registration error:', error);
+    return NextResponse.json(
+      { error: 'Registration failed, please try again later' },
+      { status: 500 }
+    );
   }
 }

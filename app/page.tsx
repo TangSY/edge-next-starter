@@ -9,7 +9,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen flex flex-col p-8">
-      {/* 顶部导航栏 */}
+      {/* Top Navigation Bar */}
       <nav className="flex justify-between items-center max-w-6xl mx-auto w-full mb-12">
         <h1 className="text-xl font-bold">Edge Next Starter</h1>
         <div className="flex items-center gap-4">
@@ -17,28 +17,28 @@ export default async function Home() {
             <>
               <span className="text-sm text-muted-foreground">{session.user.email}</span>
               <Button variant="outline" size="sm" asChild>
-                <Link href="/dashboard">仪表板</Link>
+                <Link href="/dashboard">Dashboard</Link>
               </Button>
               <form action="/api/auth/signout" method="POST">
                 <Button type="submit" variant="ghost" size="sm">
-                  退出
+                  Sign Out
                 </Button>
               </form>
             </>
           ) : (
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/login">登录</Link>
+                <Link href="/login">Login</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link href="/register">注册</Link>
+                <Link href="/register">Sign Up</Link>
               </Button>
             </>
           )}
         </div>
       </nav>
 
-      {/* 主要内容 */}
+      {/* Main Content */}
       <main className="max-w-4xl w-full mx-auto space-y-8 flex-1 flex flex-col justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold">Welcome to Next.js on Cloudflare</h1>

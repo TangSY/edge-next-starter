@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# 预提交钩子：仅格式化暂存文件，提升速度与稳定性
-# 依赖：lint-staged（由 pnpm 安装）
+# Pre-commit hook: only format staged files for improved speed and stability
+# Dependency: lint-staged (installed via pnpm)
 
 pnpm exec lint-staged

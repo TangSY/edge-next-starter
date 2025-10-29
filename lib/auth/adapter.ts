@@ -1,9 +1,9 @@
 /**
- * NextAuth Prisma 适配器
- * 用于将 NextAuth 与 Prisma + Cloudflare D1 集成
+ * NextAuth Prisma Adapter
+ * Integrates NextAuth with Prisma + Cloudflare D1
  *
- * 注意：NextAuth 期望 ID 是 string 类型，但 D1 使用 integer
- * 此适配器处理 ID 类型转换（string <-> number）
+ * Note: NextAuth expects IDs to be string type, but D1 uses integer
+ * This adapter handles ID type conversion (string <-> number)
  */
 
 import { PrismaClient } from '@prisma/client';

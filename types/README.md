@@ -6,10 +6,10 @@ This directory contains all TypeScript type definitions organized by responsibil
 
 ```
 types/
-├── index.ts          # 统一导出入口
-├── cloudflare.d.ts   # Cloudflare 环境和绑定类型
-├── api.ts            # API 相关类型
-└── rate-limit.ts     # 速率限制类型
+├── index.ts          # Unified export entry
+├── cloudflare.d.ts   # Cloudflare environment and binding types
+├── api.ts            # API-related types
+└── rate-limit.ts     # Rate limit types
 ```
 
 ## Type Files
@@ -77,7 +77,7 @@ import { RateLimitConfig, RateLimitStatus } from '@/types/rate-limit';
 ### Import via unified index
 
 ```typescript
-// 从统一入口导入多个类型
+// Import multiple types from unified entry
 import { CloudflareEnv, PaginationParams, RateLimitConfig } from '@/types';
 ```
 

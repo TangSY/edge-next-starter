@@ -1,4 +1,4 @@
-// 使用 ESM 导出以适配 package.json 中的 "type": "module"
+// Use ESM export to adapt to "type": "module" in package.json
 export default {
   plugins: {
     tailwindcss: {},

@@ -5,7 +5,13 @@ import { CloudflareEnv } from '@/types/cloudflare';
 /**
  * Global Prisma client instance cache
  * In Edge Runtime, each isolate has its own global scope
+ * In Node.js Runtime, use global to avoid multiple instances during hot reload
  */
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
+}
+
 let prismaClient: PrismaClient | null = null;
 
 /**
@@ -19,7 +25,6 @@ export function getCloudflareEnv(): CloudflareEnv | null {
 
   // Check whether running in Cloudflare environment
   if (!env || typeof env.DB === 'undefined') {
-    console.warn('Cloudflare bindings not available. Running in local mode?');
     return null;
   }
 
@@ -36,34 +41,57 @@ export function getDatabase(): D1Database | null {
 
 /**
  * Create or reuse Prisma client instance (singleton)
- * Connect to Cloudflare D1 using D1 adapter
+ * Supports multiple runtime environments:
+ * - Edge Runtime: Uses D1 adapter with Cloudflare D1
+ * - Node.js Runtime: Uses file database (local dev) or D1 adapter (production)
  *
  * Important:
  * - In Edge Runtime, each isolate has its own global scope
  * - This function reuses the PrismaClient instance within the same isolate
  * - Avoid creating new client per request for performance
  */
-export function createPrismaClient(): PrismaClient | null {
+export function createPrismaClient(): PrismaClient {
   const db = getDatabase();
-  if (!db) {
-    return null;
-  }
 
-  // If instance exists, return it (reuse)
-  if (prismaClient) {
+  if (db) {
+    // Production or Edge Runtime with D1: Use D1 adapter
+    if (prismaClient) {
+      return prismaClient;
+    }
+
+    const adapter = new PrismaD1(db);
+    prismaClient = new PrismaClient({
+      adapter,
+      // In Edge Runtime, no pool configuration needed
+      // D1 adapter manages connections automatically
+    });
+
     return prismaClient;
+  } else {
+    // Local development environment: Use file database
+    // Reuse global instance to avoid multiple connections during hot reload
+    if (process.env.NODE_ENV === 'production') {
+      if (!prismaClient) {
+        prismaClient = new PrismaClient();
+      }
+      return prismaClient;
+    } else {
+      // Development mode: Use global variable for hot reload support
+      if (!global.prisma) {
+        global.prisma = new PrismaClient({
+          log: ['error', 'warn'],
+        });
+      }
+      return global.prisma;
+    }
   }
-
-  // Create new instance and cache it
-  const adapter = new PrismaD1(db);
-  prismaClient = new PrismaClient({
-    adapter,
-    // In Edge Runtime, no pool configuration needed
-    // D1 adapter manages connections automatically
-  });
-
-  return prismaClient;
 }
+
+/**
+ * Prisma Client singleton instance
+ * Use this for all database operations requiring Prisma
+ */
+export const prisma = createPrismaClient();
 
 /**
  * Reset Prisma client (mainly for tests)
@@ -74,11 +102,15 @@ export function resetPrismaClient(): void {
     prismaClient.$disconnect();
     prismaClient = null;
   }
+  if (global.prisma) {
+    global.prisma.$disconnect();
+    global.prisma = undefined;
+  }
 }
 
 /**
  * Database query helper (kept for backward compatibility)
- * @deprecated Use createPrismaClient() to get Prisma client
+ * @deprecated Use prisma client directly for better type safety
  */
 export class DatabaseClient {
   private db: D1Database;
@@ -139,7 +171,7 @@ export class DatabaseClient {
 
 /**
  * Create database client instance (kept for backward compatibility)
- * @deprecated Use createPrismaClient() to get Prisma client
+ * @deprecated Use prisma client directly for better type safety
  */
 export function createDatabaseClient(): DatabaseClient | null {
   const db = getDatabase();

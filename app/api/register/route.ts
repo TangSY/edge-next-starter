@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db/client';
 import { z } from 'zod';
 
 // 使用 Node.js 运行时（bcryptjs 需要）

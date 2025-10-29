@@ -1,13 +1,14 @@
 /**
  * NextAuth 认证配置
- * 支持凭证登录（邮箱+密码）和 OAuth 提供商
+ * 支持凭证登录（邮箱+密码）和 Google OAuth
  */
 
 import NextAuth from 'next-auth';
 import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
 import { compare } from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db/client';
 import { PrismaAdapter } from '@/lib/auth/adapter';
 
 export const authConfig: NextAuthConfig = {
@@ -27,6 +28,21 @@ export const authConfig: NextAuthConfig = {
 
   // 认证提供商配置
   providers: [
+    // Google OAuth 登录
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      // Google 允许的授权范围
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
+    }),
+
+    // 凭证登录（邮箱+密码）
     Credentials({
       name: 'credentials',
       credentials: {

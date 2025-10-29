@@ -167,8 +167,13 @@ function extractModelsFromSchema(schema) {
       });
     }
 
+    // Extract table name from @@map directive
+    const mapMatch = /@@map\("([^"]+)"\)/.exec(modelBody);
+    const tableName = mapMatch ? mapMatch[1] : modelName.toLowerCase() + 's';
+
     models.set(modelName.toLowerCase(), {
       name: modelName,
+      tableName: tableName.toLowerCase(),
       fields,
     });
   }
@@ -244,21 +249,26 @@ function validateSchemaConsistency() {
 
   // Check each Prisma model has a corresponding SQL table
   models.forEach((model, modelName) => {
-    // Prisma model names can be plural or singular; check mapping
-    const tableName = model.name.toLowerCase() + 's'; // simple plural form
+    // Use the tableName from @@map or default plural form
+    const tableName = model.tableName;
 
-    if (!tables.has(modelName) && !tables.has(tableName)) {
+    if (!tables.has(tableName)) {
       errors.push(
-        `Model "${model.name}" in Prisma schema has no corresponding table in migrations`
+        `Model "${model.name}" in Prisma schema has no corresponding table in migrations (expected table: ${tableName})`
       );
     }
   });
 
   // Check each SQL table has a corresponding Prisma model
   tables.forEach((table, tableName) => {
-    const singularName = tableName.endsWith('s') ? tableName.slice(0, -1) : tableName;
+    let found = false;
+    models.forEach(model => {
+      if (model.tableName === tableName) {
+        found = true;
+      }
+    });
 
-    if (!models.has(tableName) && !models.has(singularName)) {
+    if (!found) {
       warnings.push(
         `Table "${table.name}" in migrations has no corresponding model in Prisma schema`
       );

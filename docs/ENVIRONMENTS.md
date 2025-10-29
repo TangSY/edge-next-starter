@@ -16,12 +16,14 @@ This document summarizes core configuration across local, test, and production e
 
 Define the following secrets in repository **Settings → Secrets and variables → Actions** so that CI/CD workflows can create databases, run migrations, and deploy pages:
 
-| Name                    | Purpose                                                          |
-| ----------------------- | ---------------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN`  | Authorize Wrangler to create/migrate D1, R2, KV and deploy Pages |
-| `CLOUDFLARE_ACCOUNT_ID` | Identify the Cloudflare account for Wrangler API calls           |
+| Name                                        | Purpose                                                           |
+| ------------------------------------------- | ----------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`                      | Authorize Wrangler to create/migrate D1, R2, KV and deploy Pages  |
+| `CLOUDFLARE_ACCOUNT_ID`                     | Identify the Cloudflare account for Wrangler API calls            |
+| `NEXTAUTH_SECRET`                           | Required by NextAuth JWT sessions (set via `wrangler secret put`) |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth credentials used by NextAuth (must be set together)  |
 
-Add extra third‑party secrets here and reference them in `[vars]` of `wrangler.*.toml`.
+Add extra third‑party secrets here and reference them in `[vars]` of `wrangler.*.toml`. For Google OAuth, remember Cloudflare Pages separates Preview/Production environments—configure both Client ID/Secret pairs accordingly.
 
 ## Bindings Checklist
 

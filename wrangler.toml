@@ -52,3 +52,6 @@ CACHE_DEFAULT_TTL = "3600"
 # Performance monitoring configuration
 ENABLE_PERFORMANCE_MONITORING = "true"
 SLOW_QUERY_THRESHOLD_MS = "1000"
+
+# Authentication configuration
+NEXTAUTH_SECRET = "dev-secret"

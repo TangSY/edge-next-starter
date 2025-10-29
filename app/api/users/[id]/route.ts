@@ -6,9 +6,12 @@ import { ValidationError, ResourceNotFoundError } from '@/lib/errors';
 export const runtime = 'edge';
 
 // GET /api/users/[id] - Get single user
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   return withRepositories(request, async repos => {
-    const { id } = await params;
+    const { id } = params;
+    if (!id) {
+      throw new ValidationError('User ID is required');
+    }
 
     // Validate ID
     const userId = parseInt(id, 10);
@@ -29,9 +32,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 // PATCH /api/users/[id] - Update user
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   return withRepositories(request, async repos => {
-    const { id } = await params;
+    const { id } = params;
+    if (!id) {
+      throw new ValidationError('User ID is required');
+    }
 
     // Validate ID
     const userId = parseInt(id, 10);
@@ -79,12 +85,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 }
 
 // DELETE /api/users/[id] - Delete user
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   return withRepositories(request, async repos => {
-    const { id } = await params;
+    const { id } = params;
+    if (!id) {
+      throw new ValidationError('User ID is required');
+    }
 
     // Validate ID
     const userId = parseInt(id, 10);

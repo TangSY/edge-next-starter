@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   validationErrorResponse,
-  serviceUnavailableResponse,
   notFoundResponse,
   withMiddleware,
   withApiHandler,
 } from '@/lib/api';
 import { uploadFile, downloadFile } from '@/lib/r2/client';
+import { FileSizeExceededError, FileUploadError, MissingRequiredFieldError } from '@/lib/errors';
 
 export const runtime = 'edge';
 
@@ -21,11 +21,11 @@ export async function POST(request: NextRequest) {
       const file = formData.get('file') as File | null;
 
       if (!file) {
-        return validationErrorResponse('No file provided');
+        throw new MissingRequiredFieldError('file');
       }
 
       if (file.size > MAX_FILE_SIZE) {
-        return validationErrorResponse(
+        throw new FileSizeExceededError(
           `File size exceeds maximum allowed size of ${MAX_FILE_SIZE / 1024 / 1024}MB`
         );
       }
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (!stored) {
-        return serviceUnavailableResponse('R2 storage not available');
+        throw new FileUploadError('R2 storage not available');
       }
 
       return {

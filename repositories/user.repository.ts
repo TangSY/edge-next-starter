@@ -87,13 +87,14 @@ export class UserRepository {
   /**
    * Create user
    */
-  async create(data: { email: string; name?: string | null }) {
+  async create(data: { email: string; name?: string | null; password?: string | null }) {
     try {
       const start = Date.now();
       const user = await this.prisma.user.create({
         data: {
           email: data.email,
-          name: data.name || null,
+          name: data.name ?? null,
+          ...(data.password !== undefined && { password: data.password }),
         },
       });
       await analytics.trackDatabaseQuery('user.create', 'users', Date.now() - start);

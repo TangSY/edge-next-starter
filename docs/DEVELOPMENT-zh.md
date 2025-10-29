@@ -86,46 +86,39 @@ pnpm run test:coverage
 
 ```typescript
 // app/api/example/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from '@/lib/db/client';
+import { NextRequest } from 'next/server';
+import { withRepositories, successResponse } from '@/lib/api';
 
 export const runtime = 'edge'; // 重要：启用 Edge Runtime
 
 export async function GET(request: NextRequest) {
-  const db = createDatabaseClient();
-
-  if (!db) {
-    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
-  }
-
-  // 你的业务逻辑
-  const data = await db.query('SELECT * FROM your_table');
-
-  return NextResponse.json({ data });
+  return withRepositories(request, async repos => {
+    const users = await repos.users.findAll();
+    return successResponse(users, '读取用户列表成功');
+  });
 }
 ```
 
 ### 数据库操作
 
 ```typescript
-import { createDatabaseClient } from '@/lib/db/client';
+import { NextRequest } from 'next/server';
+import { withRepositories, successResponse } from '@/lib/api';
+import { withCache } from '@/lib/cache/client';
 
-const db = createDatabaseClient();
+export async function GET(request: NextRequest) {
+  return withRepositories(request, async repos => {
+    const users = await repos.users.findAll('asc');
 
-// 查询多条
-const users = await db.query<User>('SELECT * FROM users');
+    const posts = await withCache(
+      'posts:latest',
+      () => repos.posts.findAll({ take: 5, published: true }),
+      300
+    );
 
-// 查询单条
-const user = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [userId]);
-
-// 插入/更新/删除
-const result = await db.execute('INSERT INTO users (email, name) VALUES (?, ?)', [email, name]);
-
-// 批量操作
-await db.batch([
-  { sql: 'INSERT INTO users (email) VALUES (?)', params: ['a@example.com'] },
-  { sql: 'INSERT INTO users (email) VALUES (?)', params: ['b@example.com'] },
-]);
+    return successResponse({ users, posts });
+  });
+}
 ```
 
 ### R2 存储操作

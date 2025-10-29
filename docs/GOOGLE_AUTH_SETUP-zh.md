@@ -9,17 +9,22 @@
 3. 输入项目名称（如 "edge-next-starter"）
 4. 点击"创建"
 
-### 2. 启用 Google+ API
+### 2. 配置 OAuth Consent Screen
 
-1. 在左侧菜单中，选择"API 和服务" → "库"
-2. 搜索 "Google+ API"
-3. 点击"启用"
+1. 在左侧菜单中，选择"API 和服务" → "OAuth Consent Screen"
+2. 用户类型选择 **External（外部）**
+3. 填写应用名称、支持邮箱、开发者邮箱等信息
+4. 作用域保持默认即可
+5. 测试用户添加用于调试的 Google 账号
+6. 连续点击"保存并继续"完成配置
+
+> ✅ 新版 Google Identity Services 无需启用 Google+ API，保持默认即可。
 
 ### 3. 创建 OAuth 2.0 凭据
 
 1. 在左侧菜单中，选择"API 和服务" → "凭据"
 2. 点击"创建凭据" → "OAuth 客户端 ID"
-3. 如果是首次创建，需要先配置"OAuth 同意屏幕"：
+3. 如果是首次创建，需要先配置"OAuth Consent Screen"：
    - 用户类型：外部
    - 应用名称：edge-next-starter
    - 用户支持电子邮件：你的邮箱
@@ -54,6 +59,8 @@
 GOOGLE_CLIENT_ID=你的客户端ID
 GOOGLE_CLIENT_SECRET=你的客户端密钥
 ```
+
+> 小贴士：`GOOGLE_CLIENT_ID` 与 `GOOGLE_CLIENT_SECRET` 必须成对配置，否则环境校验会报错。
 
 ### 5. 测试登录
 
@@ -133,7 +140,7 @@ VALUES (1, 'oauth', 'google', '1234567890', ...);
 
 **解决**：
 
-- 在 OAuth 同意屏幕中添加你的 Google 账号为测试用户
+- 在 OAuth Consent Screen 中添加你的 Google 账号为测试用户
 
 ### 3. 登录成功但没有跳转
 
@@ -157,7 +164,7 @@ VALUES (1, 'oauth', 'google', '1234567890', ...);
    https://your-domain.com/api/auth/callback/google
    ```
 
-2. 在 Cloudflare Pages 环境变量中配置：
+2. 在 Cloudflare Pages 环境变量中配置（敏感值推荐使用 `wrangler secret put ...`）：
    ```
    NEXTAUTH_URL=https://your-domain.com
    GOOGLE_CLIENT_ID=你的客户端ID

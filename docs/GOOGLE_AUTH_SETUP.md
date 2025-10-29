@@ -9,11 +9,16 @@
 3. Enter project name (e.g., "edge-next-starter")
 4. Click "Create"
 
-### 2. Enable Google+ API
+### 2. Configure OAuth Consent Screen
 
-1. In the left menu, select "APIs & Services" → "Library"
-2. Search for "Google+ API"
-3. Click "Enable"
+1. In the left menu, select "APIs & Services" → "OAuth consent screen"
+2. User type: **External**
+3. App name / support email / developer email：填写项目相关信息
+4. Scopes：保持默认（无需选择额外 scope）
+5. Test users：添加用于测试的 Google 账号
+6. 点击 “Save and Continue” 直至完成
+
+> ✅ 新版 Google Identity Services 不再需要启用 Google+ API，保持默认即可。
 
 ### 3. Create OAuth 2.0 Credentials
 
@@ -54,6 +59,8 @@ Edit your `.env.local` file:
 GOOGLE_CLIENT_ID=your-client-id
 GOOGLE_CLIENT_SECRET=your-client-secret
 ```
+
+> 提示：`GOOGLE_CLIENT_ID` 与 `GOOGLE_CLIENT_SECRET` 必须同时配置，否则环境校验会失败。
 
 ### 5. Test the Login
 
@@ -157,7 +164,7 @@ When deploying to production:
    https://your-domain.com/api/auth/callback/google
    ```
 
-2. Configure environment variables in Cloudflare Pages:
+2. Configure environment variables in Cloudflare Pages (prefer `wrangler secret put ...` for sensitive values):
    ```
    NEXTAUTH_URL=https://your-domain.com
    GOOGLE_CLIENT_ID=your-client-id

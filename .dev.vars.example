@@ -8,5 +8,6 @@
 
 # App environment
 ENVIRONMENT=development
+# NEXTAUTH_SECRET=dev-secret
 
 # Other local development variables...

@@ -25,3 +25,4 @@ id = "d45eef82c64443939acaa1dc2b45aa95"
 [vars]
 ENVIRONMENT = "test"
 ANALYTICS_SINK = "kv"
+# NEXTAUTH_SECRET 需通过 `wrangler secret put NEXTAUTH_SECRET` 配置，避免提交到版本库

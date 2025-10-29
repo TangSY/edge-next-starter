@@ -1,9 +1,45 @@
+import { auth } from '@/auth';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
 export const runtime = 'edge';
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
-      <main className="max-w-4xl w-full space-y-8">
+    <div className="min-h-screen flex flex-col p-8">
+      {/* 顶部导航栏 */}
+      <nav className="flex justify-between items-center max-w-6xl mx-auto w-full mb-12">
+        <h1 className="text-xl font-bold">Edge Next Starter</h1>
+        <div className="flex items-center gap-4">
+          {session?.user ? (
+            <>
+              <span className="text-sm text-muted-foreground">{session.user.email}</span>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/dashboard">仪表板</Link>
+              </Button>
+              <form action="/api/auth/signout" method="POST">
+                <Button type="submit" variant="ghost" size="sm">
+                  退出
+                </Button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/login">登录</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link href="/register">注册</Link>
+              </Button>
+            </>
+          )}
+        </div>
+      </nav>
+
+      {/* 主要内容 */}
+      <main className="max-w-4xl w-full mx-auto space-y-8 flex-1 flex flex-col justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold">Welcome to Next.js on Cloudflare</h1>
           <p className="text-xl text-gray-600 dark:text-gray-400">

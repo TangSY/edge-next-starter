@@ -1,5 +1,5 @@
 /**
- * 用户档案页，展示基本信息并提供占位说明
+ * Profile page that surfaces basic account information and placeholder guidance.
  */
 
 import { auth } from '@/auth';
@@ -21,33 +21,34 @@ export default async function ProfilePage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
           <p className="text-muted-foreground">
-            Manage your personal information. This
-            starter模板仅提供示例布局，可在此基础上扩展提交表单等功能。
+            Manage your personal information. This starter keeps the layout simple—extend it with
+            profile forms, upload workflows, or any other bespoke actions your product needs.
           </p>
         </div>
 
         <Card>
           <CardHeader>
             <CardTitle>Account</CardTitle>
-            <CardDescription>当前登录用户信息</CardDescription>
+            <CardDescription>Details for the currently authenticated user</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <span className="text-sm font-medium">邮箱</span>
+              <span className="text-sm font-medium">Email</span>
               <p className="text-muted-foreground">{session.user.email}</p>
             </div>
             <div>
-              <span className="text-sm font-medium">昵称</span>
-              <p className="text-muted-foreground">{session.user.name || '未设置'}</p>
+              <span className="text-sm font-medium">Display Name</span>
+              <p className="text-muted-foreground">{session.user.name || 'Not set'}</p>
             </div>
             <div>
-              <span className="text-sm font-medium">用户 ID</span>
+              <span className="text-sm font-medium">User ID</span>
               <p className="text-muted-foreground">{session.user.id}</p>
             </div>
             <div>
-              <span className="text-sm font-medium">头像</span>
+              <span className="text-sm font-medium">Avatar</span>
               <p className="text-muted-foreground">
-                {session.user.image || '未上传头像，可在此处接入上传功能'}
+                {session.user.image ||
+                  'No avatar uploaded yet—hook in your preferred uploader here.'}
               </p>
             </div>
           </CardContent>
@@ -55,17 +56,17 @@ export default async function ProfilePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>接下来可以做什么？</CardTitle>
+            <CardTitle>Where to go next?</CardTitle>
             <CardDescription>
-              按需扩展表单提交、头像上传、OAuth 绑定等功能，完善真实项目场景。
+              Plug in profile edits, avatar flows, OAuth linking, and more.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3 sm:flex-row">
             <Button variant="outline" className="w-full sm:w-auto" asChild>
-              <Link href="/dashboard">返回仪表盘</Link>
+              <Link href="/dashboard">Back to Dashboard</Link>
             </Button>
             <Button variant="outline" className="w-full sm:w-auto" asChild>
-              <Link href="/">返回首页</Link>
+              <Link href="/">Back to Home</Link>
             </Button>
           </CardContent>
         </Card>

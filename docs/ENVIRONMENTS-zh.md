@@ -16,12 +16,14 @@
 
 在仓库 **Settings → Secrets and variables → Actions** 中定义以下密钥，以便 CI/CD 工作流可以创建数据库、执行迁移并部署页面：
 
-| 名称                    | 用途                                            |
-| ----------------------- | ----------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN`  | 授权 Wrangler 创建/迁移 D1、R2、KV 并部署 Pages |
-| `CLOUDFLARE_ACCOUNT_ID` | 标识 Cloudflare 账户，供 Wrangler 调用          |
+| 名称                                        | 用途                                                                   |
+| ------------------------------------------- | ---------------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`                      | 授权 Wrangler 创建/迁移 D1、R2、KV 并部署 Pages                        |
+| `CLOUDFLARE_ACCOUNT_ID`                     | 标识 Cloudflare 账户，供 Wrangler 调用                                 |
+| `NEXTAUTH_SECRET`                           | NextAuth JWT 会话所需，使用 `wrangler secret put NEXTAUTH_SECRET` 设置 |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | NextAuth 的 Google OAuth 凭据，两项必须成对配置                        |
 
-如有额外的第三方服务密钥，请在此处新增并在 `wrangler.*.toml` 的 `[vars]` 中引用。
+如有额外的第三方服务密钥，请在此处新增并在 `wrangler.*.toml` 的 `[vars]` 中引用。对于 Google OAuth，请分别在 Cloudflare Pages 的 Preview 与 Production 环境中配置对应的 Client ID/Secret，确保回调域名匹配。
 
 ## 绑定校验清单
 

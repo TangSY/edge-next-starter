@@ -75,9 +75,15 @@ jobs:
             ${{ runner.os }}-nextjs-
 
       - name: Build Next.js application
+        env:
+          NODE_ENV: production
+          CI: true
         run: pnpm run build
 
       - name: Build for Cloudflare Pages
+        env:
+          NODE_ENV: production
+          CI: true
         run: pnpm run pages:build
 
       - name: Upload build artifacts

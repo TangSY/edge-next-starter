@@ -100,7 +100,16 @@ export type FullEnv = z.infer<typeof fullEnvSchema>;
 function validateEnv(): Env {
   try {
     const parsed = envSchema.parse(process.env);
-    if (parsed.NEXTAUTH_SECRET === 'dev-secret' && parsed.NODE_ENV === 'production') {
+    const isCI = process.env.CI === 'true';
+    const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
+
+    // Only validate NEXTAUTH_SECRET in production runtime (not during CI builds)
+    if (
+      parsed.NEXTAUTH_SECRET === 'dev-secret' &&
+      parsed.NODE_ENV === 'production' &&
+      !isCI &&
+      !isBuildTime
+    ) {
       console.error(
         '❌ NEXTAUTH_SECRET is using the default development value. Please set a secure secret in production.'
       );

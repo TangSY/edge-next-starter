@@ -25,6 +25,77 @@ Define the following secrets in repository **Settings → Secrets and variables 
 
 Add extra third‑party secrets here and reference them in `[vars]` of `wrangler.*.toml`. For Google OAuth, remember Cloudflare Pages separates Preview/Production environments—configure both Client ID/Secret pairs accordingly.
 
+### NEXTAUTH_SECRET Configuration
+
+The `NEXTAUTH_SECRET` is a critical security key used by NextAuth.js to encrypt and sign JWT tokens. Proper configuration is essential for authentication security.
+
+#### Generating a Secure Secret
+
+Use one of the following methods to generate a cryptographically secure random secret:
+
+```bash
+# Method 1: OpenSSL (Recommended)
+openssl rand -base64 32
+
+# Method 2: Node.js
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+# Method 3: Online Generator
+# Visit https://generate-secret.vercel.app/32
+```
+
+#### Configuration by Environment
+
+**Local Development:**
+
+- Use the default value `dev-secret` in `.env.local`
+- Security validation is relaxed for local development
+- **Never use this default value in production**
+
+**CI/CD Builds:**
+
+- CI builds automatically skip NEXTAUTH_SECRET validation
+- The build process uses `CI=true` flag to allow default values during compilation
+- Runtime validation still enforces production requirements
+
+**Test/Production Deployment (Cloudflare Pages):**
+
+1. Generate a unique secret key using one of the methods above
+2. Configure in Cloudflare Pages Dashboard:
+   - Navigate to your Pages project
+   - Go to `Settings` → `Environment variables`
+   - Add variable:
+     - **Name**: `NEXTAUTH_SECRET`
+     - **Value**: (paste your generated secret)
+     - **Environment**: Select `Production` and/or `Preview` as needed
+
+**Security Best Practices:**
+
+- ✅ Generate a unique secret for each environment (test, production)
+- ✅ Store secrets in environment variables, never in code
+- ✅ Use at least 32 bytes (256 bits) of randomness
+- ✅ Rotate secrets periodically for enhanced security
+- ❌ Never commit the actual secret to version control
+- ❌ Never share secrets between different projects
+- ❌ Never use the default `dev-secret` value in production
+
+**Validation Behavior:**
+
+The application validates `NEXTAUTH_SECRET` based on the runtime environment:
+
+- **Development** (`NODE_ENV=development`): Accepts default value
+- **CI Builds** (`CI=true`): Skips validation during build phase
+- **Production Runtime** (`NODE_ENV=production`, not CI): Requires a non-default secure value, will throw an error if default is detected
+
+**Troubleshooting:**
+
+If you see the error "NEXTAUTH_SECRET must be configured for production environments":
+
+1. Ensure you've set `NEXTAUTH_SECRET` in Cloudflare Pages environment variables
+2. Verify the environment variable is set for the correct environment (Production/Preview)
+3. Check that you're not using the default `dev-secret` value
+4. Redeploy your application after updating the environment variable
+
 ## Bindings Checklist
 
 - D1: Confirm `database_name` matches the table; remote environments require real `database_id`.

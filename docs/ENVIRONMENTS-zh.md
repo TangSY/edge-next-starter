@@ -25,6 +25,77 @@
 
 如有额外的第三方服务密钥，请在此处新增并在 `wrangler.*.toml` 的 `[vars]` 中引用。对于 Google OAuth，请分别在 Cloudflare Pages 的 Preview 与 Production 环境中配置对应的 Client ID/Secret，确保回调域名匹配。
 
+### NEXTAUTH_SECRET 配置详解
+
+`NEXTAUTH_SECRET` 是 NextAuth.js 用于加密和签名 JWT tokens 的关键安全密钥。正确配置对于认证安全至关重要。
+
+#### 生成安全密钥
+
+使用以下任一方法生成加密安全的随机密钥：
+
+```bash
+# 方法1：使用 OpenSSL（推荐）
+openssl rand -base64 32
+
+# 方法2：使用 Node.js
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+# 方法3：在线生成器
+# 访问 https://generate-secret.vercel.app/32
+```
+
+#### 不同环境的配置方式
+
+**本地开发环境：**
+
+- 在 `.env.local` 中使用默认值 `dev-secret` 即可
+- 本地开发环境的安全验证相对宽松
+- **绝对不要在生产环境中使用此默认值**
+
+**CI/CD 构建：**
+
+- CI 构建会自动跳过 NEXTAUTH_SECRET 验证
+- 构建过程使用 `CI=true` 标志以允许编译期使用默认值
+- 运行时验证仍会强制执行生产环境要求
+
+**测试/生产部署（Cloudflare Pages）：**
+
+1. 使用上述方法生成唯一的密钥
+2. 在 Cloudflare Pages 控制台中配置：
+   - 进入你的 Pages 项目
+   - 点击 `Settings`（设置）→ `Environment variables`（环境变量）
+   - 添加变量：
+     - **Name**（名称）：`NEXTAUTH_SECRET`
+     - **Value**（值）：（粘贴你生成的密钥）
+     - **Environment**（环境）：根据需要选择 `Production`（生产）和/或 `Preview`（预览）
+
+**安全最佳实践：**
+
+- ✅ 为每个环境（测试、生产）生成独立的密钥
+- ✅ 将密钥存储在环境变量中，绝不写入代码
+- ✅ 使用至少 32 字节（256 位）的随机性
+- ✅ 定期轮换密钥以增强安全性
+- ❌ 绝不将实际密钥提交到版本控制系统
+- ❌ 绝不在不同项目之间共享密钥
+- ❌ 绝不在生产环境中使用默认的 `dev-secret` 值
+
+**验证行为说明：**
+
+应用程序会根据运行时环境验证 `NEXTAUTH_SECRET`：
+
+- **开发环境**（`NODE_ENV=development`）：接受默认值
+- **CI 构建**（`CI=true`）：构建阶段跳过验证
+- **生产运行时**（`NODE_ENV=production`，非 CI）：要求非默认的安全值，如果检测到默认值会抛出错误
+
+**故障排除：**
+
+如果遇到错误 "NEXTAUTH_SECRET must be configured for production environments"：
+
+1. 确保已在 Cloudflare Pages 环境变量中设置 `NEXTAUTH_SECRET`
+2. 验证环境变量已为正确的环境设置（生产/预览）
+3. 检查是否使用了默认的 `dev-secret` 值
+4. 更新环境变量后重新部署应用程序
+
 ## 绑定校验清单
 
 - D1：确认 `database_name` 与上表一致，远程环境需要真实的 `database_id`。

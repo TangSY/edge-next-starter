@@ -32,6 +32,14 @@ npm install -g pnpm
 pnpm install
 ```
 
+This will automatically generate the Prisma Client via the postinstall hook.
+
+> **Note**: If you need to regenerate the Prisma Client manually (e.g., after modifying `schema.prisma`), run:
+>
+> ```bash
+> pnpm prisma:generate
+> ```
+
 ### 5. Configure environment variables
 
 ```bash

@@ -32,6 +32,14 @@ npm install -g pnpm
 pnpm install
 ```
 
+安装依赖后会通过 postinstall hook 自动生成 Prisma Client。
+
+> **提示**：如果需要手动重新生成 Prisma Client（例如修改了 `schema.prisma` 后），运行：
+>
+> ```bash
+> pnpm prisma:generate
+> ```
+
 ### 5. 配置环境变量
 
 ```bash

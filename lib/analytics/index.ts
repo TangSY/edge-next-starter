@@ -2,6 +2,8 @@ import { env } from '@/lib/config/env';
 import { LoggerFactory } from '@/lib/logger';
 import { getKVNamespace } from '@/lib/cache/client';
 import { getCloudflareEnv } from '@/lib/db/client';
+import { getRequestContext } from '@cloudflare/next-on-pages';
+import { CloudflareEnv } from '@/types/cloudflare';
 
 const logger = LoggerFactory.getLogger('analytics');
 
@@ -375,10 +377,27 @@ export const analytics = new AnalyticsClient();
 
 /**
  * Get Analytics Engine binding (if configured)
+ * Note: For Cloudflare Pages, we need to use getRequestContext() to access bindings
  */
 export function getAnalyticsEngine(): AnalyticsEngineDataset | null {
-  const env = getCloudflareEnv();
-  return (env?.ANALYTICS as unknown as AnalyticsEngineDataset) || null;
+  try {
+    // For Cloudflare Pages with @cloudflare/next-on-pages
+    // Use getRequestContext() to access bindings (only available in request context)
+    const { env: cloudflareEnv } = getRequestContext();
+    // Type assertion because getRequestContext() doesn't include our custom CloudflareEnv type
+    const analytics = (cloudflareEnv as CloudflareEnv | undefined)?.ANALYTICS;
+    return (analytics as unknown as AnalyticsEngineDataset) || null;
+  } catch (error) {
+    // If getRequestContext fails (e.g., not in request context or local dev),
+    // try fallback to process.env for Workers or return null
+    try {
+      const env = getCloudflareEnv();
+      return (env?.ANALYTICS as unknown as AnalyticsEngineDataset) || null;
+    } catch {
+      logger.debug('Analytics Engine binding not available', { error });
+      return null;
+    }
+  }
 }
 
 /**

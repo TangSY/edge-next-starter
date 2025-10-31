@@ -1,14 +1,24 @@
-# Local development environment variables
-# Note: These variables are for wrangler dev local development only
-# Do not commit sensitive information to version control
+# Cloudflare Pages local dev bindings (used by `wrangler pages dev`)
+# Copy to `.dev.vars` for local Cloudflare dev server.
 
-# Cloudflare account info (for wrangler CLI)
-# CLOUDFLARE_ACCOUNT_ID=your-account-id
-# CLOUDFLARE_API_TOKEN=your-api-token
+# Set a non-default secret for session security when possible
+NEXTAUTH_SECRET=dev-secret
 
-# App environment
-ENVIRONMENT=development
-# NEXTAUTH_SECRET=dev-secret
+# Optional: Google OAuth (set both together)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-# Other local development variables...
-AUTH_URL=http://localhost:8788
+# Feature flags and tuning
+ANALYTICS_ENABLED=true
+ANALYTICS_SINK=log
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_MAX_REQUESTS=100
+RATE_LIMIT_WINDOW_SECONDS=60
+LOG_LEVEL=INFO
+LOG_FORMAT=json
+LOG_INCLUDE_TIMESTAMP=true
+DATABASE_QUERY_TIMEOUT=5000
+CACHE_DEFAULT_TTL=3600
+ENABLE_PERFORMANCE_MONITORING=true
+SLOW_QUERY_THRESHOLD_MS=1000
+

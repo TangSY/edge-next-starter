@@ -42,11 +42,14 @@
    http://localhost:3000
    https://your-production-domain.com
    ```
-8. Authorized redirect URIs:
-   ```
-   http://localhost:3000/api/auth/callback/google
-   https://your-production-domain.com/api/auth/callback/google
-   ```
+8. Authorized redirect URIs (Note Cloudflare dev runs on 8788):
+
+```
+http://localhost:3000/api/auth/callback/google
+http://localhost:8788/api/auth/callback/google
+https://your-production-domain.com/api/auth/callback/google
+```
+
 9. Click "Create"
 10. **Copy the Client ID and Client Secret**
 
@@ -70,7 +73,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret
    pnpm dev
    ```
 
-2. Visit the login page: http://localhost:3000/login
+2. Visit the login page: http://localhost:3000/login (Next.js) or http://localhost:8788/login (Cloudflare)
 
 3. Click the "Google" button
 

@@ -42,11 +42,14 @@
    http://localhost:3000
    https://your-production-domain.com
    ```
-8. 已获授权的重定向 URI：
-   ```
-   http://localhost:3000/api/auth/callback/google
-   https://your-production-domain.com/api/auth/callback/google
-   ```
+8. 已获授权的重定向 URI（注意 Cloudflare 开发模式端口为 8788）：
+
+```
+http://localhost:3000/api/auth/callback/google
+http://localhost:8788/api/auth/callback/google
+https://your-production-domain.com/api/auth/callback/google
+```
+
 9. 点击"创建"
 10. **复制客户端 ID 和客户端密钥**
 
@@ -70,7 +73,7 @@ GOOGLE_CLIENT_SECRET=你的客户端密钥
    pnpm dev
    ```
 
-2. 访问登录页面：http://localhost:3000/login
+2. 访问登录页面：http://localhost:3000/login（Next.js）或 http://localhost:8788/login（Cloudflare）
 
 3. 点击 "Google" 按钮
 

@@ -155,12 +155,16 @@ curl -X POST https://your-domain.com/api/users \
 ### Upload to R2
 
 ```bash
-# Upload file
+# Upload file via API
 curl -X POST https://your-domain.com/api/upload \
   -F "file=@image.jpg"
 
 # Download file
 curl https://your-domain.com/api/upload?key=uploads/1234567890-image.jpg
+
+### Upload UI (R2 demo)
+
+- Visit `/upload` to try the browser-based upload UI that posts to `/api/upload` and shows a preview.
 ```
 
 ## 🧪 Testing

@@ -155,12 +155,16 @@ curl -X POST https://your-domain.com/api/users \
 ### 文件上传到 R2
 
 ```bash
-# 上传文件
+# 通过 API 上传文件
 curl -X POST https://your-domain.com/api/upload \
   -F "file=@image.jpg"
 
 # 下载文件
 curl https://your-domain.com/api/upload?key=uploads/1234567890-image.jpg
+
+### 上传页面（R2 演示）
+
+- 访问 `/upload` 试用浏览器端上传 UI（调用 `/api/upload` 并展示预览）。
 ```
 
 ## 🧪 测试

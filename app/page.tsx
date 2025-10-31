@@ -72,12 +72,18 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="text-center mt-8">
+        <div className="text-center mt-8 space-x-3">
           <a
             href="/api/health"
             className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Check API Health
+          </a>
+          <a
+            href="/upload"
+            className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            Try File Upload (R2)
           </a>
         </div>
       </main>

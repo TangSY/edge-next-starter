@@ -19,6 +19,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { AuthService } from '@/services';
+import { ApiError } from '@/lib/http';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -50,24 +52,17 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name }),
-      });
-
-      const data = (await response.json()) as { error?: string; message?: string };
-
-      if (!response.ok) {
-        setError(data.error || 'Registration failed');
-        return;
-      }
+      await AuthService.register({ email, password, name });
 
       // Registration successful, redirect to login page
       router.push('/login?registered=true');
-    } catch (err) {
-      setError('Registration failed, please try again later');
-      console.error('Registration error:', err);
+    } catch (e: unknown) {
+      if (e instanceof ApiError) {
+        setError(e.message);
+      } else {
+        setError('Registration failed, please try again later');
+      }
+      console.error('Registration error:', e);
     } finally {
       setIsLoading(false);
     }

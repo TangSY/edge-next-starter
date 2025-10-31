@@ -81,6 +81,24 @@ export default async function Home() {
           </a>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="mt-12 py-6 border-t border-gray-200 dark:border-gray-800">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="flex justify-center items-center gap-4 text-sm text-muted-foreground">
+            <Link href="/privacy" className="hover:text-primary hover:underline transition">
+              Privacy Policy
+            </Link>
+            <span>•</span>
+            <Link href="/terms" className="hover:text-primary hover:underline transition">
+              Terms of Service
+            </Link>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Edge Next Starter. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

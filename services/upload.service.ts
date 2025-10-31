@@ -14,6 +14,8 @@ export interface UploadResult {
   etag?: string;
   url?: string;
   uploaded?: string | number | boolean | null;
+  contentType?: string;
+  name?: string;
 }
 
 /**

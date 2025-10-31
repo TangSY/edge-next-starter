@@ -49,6 +49,8 @@ export async function POST(request: NextRequest) {
         etag: stored.etag,
         uploaded: stored.uploaded,
         url: `/api/upload?key=${encodeURIComponent(stored.key)}`,
+        contentType: file.type || 'application/octet-stream',
+        name: file.name,
       };
     })
   );

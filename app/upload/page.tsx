@@ -91,17 +91,38 @@ export default function UploadPage() {
               <pre className="rounded-md bg-muted p-3 text-sm overflow-auto">
                 {JSON.stringify(result, null, 2)}
               </pre>
-              {/* Preview image if possible */}
+              {/* Preview for common media types */}
               {typeof result?.url === 'string' && result?.key && (
                 <div className="space-y-2">
                   <div className="text-sm">Preview</div>
-                  <Image
-                    src={result.url}
-                    alt={result.key}
-                    width={800}
-                    height={600}
-                    className="h-auto w-full max-w-xl rounded-md border"
-                  />
+                  {result.contentType?.startsWith('image/') ? (
+                    <Image
+                      src={result.url}
+                      alt={result.name || result.key}
+                      width={800}
+                      height={600}
+                      className="h-auto w-full max-w-xl rounded-md border"
+                    />
+                  ) : result.contentType?.startsWith('audio/') ? (
+                    <audio controls className="w-full">
+                      <source src={result.url} type={result.contentType} />
+                      Your browser does not support the audio element.
+                    </audio>
+                  ) : result.contentType?.startsWith('video/') ? (
+                    <video controls className="w-full max-w-xl rounded-md border">
+                      <source src={result.url} type={result.contentType} />
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <a
+                      href={result.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary underline"
+                    >
+                      Open file
+                    </a>
+                  )}
                 </div>
               )}
             </div>
@@ -110,9 +131,41 @@ export default function UploadPage() {
           {results && results.length > 0 && (
             <div className="space-y-3">
               <div className="text-sm text-muted-foreground">Uploaded Files:</div>
-              <pre className="rounded-md bg-muted p-3 text-sm overflow-auto">
-                {JSON.stringify(results, null, 2)}
-              </pre>
+              <div className="space-y-4">
+                {results.map(item => (
+                  <div key={item.key} className="space-y-2">
+                    <div className="text-sm font-medium">{item.name || item.key}</div>
+                    {item.url && item.contentType?.startsWith('image/') ? (
+                      <Image
+                        src={item.url}
+                        alt={item.name || item.key}
+                        width={800}
+                        height={600}
+                        className="h-auto w-full max-w-xl rounded-md border"
+                      />
+                    ) : item.url && item.contentType?.startsWith('audio/') ? (
+                      <audio controls className="w-full">
+                        <source src={item.url} type={item.contentType} />
+                        Your browser does not support the audio element.
+                      </audio>
+                    ) : item.url && item.contentType?.startsWith('video/') ? (
+                      <video controls className="w-full max-w-xl rounded-md border">
+                        <source src={item.url} type={item.contentType} />
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : item.url ? (
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary underline"
+                      >
+                        Open file
+                      </a>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </CardContent>

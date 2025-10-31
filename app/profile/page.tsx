@@ -2,7 +2,7 @@
  * Profile page that surfaces basic account information and placeholder guidance.
  */
 
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

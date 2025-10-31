@@ -3,7 +3,7 @@
  * Protects routes that require authentication
  */
 
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth/config';
 import { NextResponse } from 'next/server';
 
 export default auth(req => {

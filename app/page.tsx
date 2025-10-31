@@ -1,6 +1,7 @@
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth/config';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { handleSignOut } from '@/app/actions/auth';
 
 export const runtime = 'edge';
 
@@ -19,7 +20,7 @@ export default async function Home() {
               <Button variant="outline" size="sm" asChild>
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
-              <form action="/api/auth/signout" method="POST">
+              <form action={handleSignOut}>
                 <Button type="submit" variant="ghost" size="sm">
                   Sign Out
                 </Button>

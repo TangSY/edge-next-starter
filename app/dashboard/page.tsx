@@ -3,11 +3,12 @@
  * Only accessible to logged-in users
  */
 
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { handleSignOut } from '@/app/actions/auth';
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -26,7 +27,7 @@ export default async function DashboardPage() {
               Welcome back, {session.user.name || session.user.email}!
             </p>
           </div>
-          <form action="/api/auth/signout" method="POST">
+          <form action={handleSignOut}>
             <Button type="submit" variant="outline">
               Sign Out
             </Button>

@@ -41,4 +41,19 @@ export class UploadService {
 
     return response.data.data;
   }
+
+  /**
+   * Upload multiple files to R2 storage
+   * @param files - Files to upload
+   * @returns Array of upload results
+   */
+  static async uploadFiles(files: FileList | File[]): Promise<UploadResult[]> {
+    const list = Array.from(files as FileList | File[]);
+    const results: UploadResult[] = [];
+    for (const file of list) {
+      const res = await this.uploadFile(file);
+      results.push(res);
+    }
+    return results;
+  }
 }

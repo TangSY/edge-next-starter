@@ -5,23 +5,26 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
+import Link from 'next/link';
 import { UploadService, type UploadResult } from '@/services';
 import { ApiError } from '@/lib/http';
 
 export default function UploadPage() {
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<FileList | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [result, setResult] = useState<UploadResult | null>(null);
+  const [results, setResults] = useState<UploadResult[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   async function handleUpload() {
-    if (!file) {
-      setError('Please choose a file');
+    if (!files || files.length === 0) {
+      setError('Please choose file(s)');
       return;
     }
     setIsUploading(true);
@@ -29,8 +32,17 @@ export default function UploadPage() {
     setResult(null);
 
     try {
-      const uploadResult = await UploadService.uploadFile(file);
-      setResult(uploadResult);
+      if (files.length === 1) {
+        const uploadResult = await UploadService.uploadFile(files[0]);
+        setResult(uploadResult);
+        setResults(null);
+      } else {
+        const uploadResults = await UploadService.uploadFiles(files);
+        setResults(uploadResults);
+        setResult(null);
+      }
+      setFiles(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (e: unknown) {
       if (e instanceof ApiError) {
         setError(e.message);
@@ -47,18 +59,25 @@ export default function UploadPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <Card className="w-full max-w-xl">
         <CardHeader>
-          <CardTitle>Upload a File to R2</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>Upload a File to R2</CardTitle>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/">Back Home</Link>
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Input
               type="file"
-              onChange={e => setFile(e.target.files?.[0] || null)}
+              ref={fileInputRef}
+              multiple
+              onChange={e => setFiles(e.target.files || null)}
               disabled={isUploading}
             />
           </div>
 
-          <Button onClick={handleUpload} disabled={isUploading || !file}>
+          <Button onClick={handleUpload} disabled={isUploading || !files || files.length === 0}>
             {isUploading ? 'Uploading...' : 'Upload'}
           </Button>
 
@@ -85,6 +104,15 @@ export default function UploadPage() {
                   />
                 </div>
               )}
+            </div>
+          )}
+
+          {results && results.length > 0 && (
+            <div className="space-y-3">
+              <div className="text-sm text-muted-foreground">Uploaded Files:</div>
+              <pre className="rounded-md bg-muted p-3 text-sm overflow-auto">
+                {JSON.stringify(results, null, 2)}
+              </pre>
             </div>
           )}
         </CardContent>

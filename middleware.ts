@@ -1,6 +1,6 @@
 /**
  * NextAuth Middleware
- * Protects routes that require authentication
+ * Default-protected strategy: All routes require authentication unless explicitly made public
  */
 
 import { auth } from '@/lib/auth/config';
@@ -8,22 +8,31 @@ import { NextResponse } from 'next/server';
 
 export default auth(req => {
   const isAuthenticated = !!req.auth;
-  const isAuthPage =
-    req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/register');
+  const pathname = req.nextUrl.pathname;
 
-  // If user is authenticated, redirect to home when accessing login/register pages
+  // Define public routes that don't require authentication
+  const publicPaths = [
+    '/', // Home page
+    '/login', // Login page
+    '/register', // Register page
+    '/api/auth', // NextAuth API routes
+    '/api/health', // Health check endpoint
+    '/api/register', // User registration endpoint
+  ];
+
+  // Check if current path is public
+  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
+  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
+
+  // If user is authenticated and trying to access auth pages, redirect to home
   if (isAuthenticated && isAuthPage) {
     return NextResponse.redirect(new URL('/', req.url));
   }
 
-  // If user is not authenticated, redirect to login when accessing protected pages
-  // Add protected routes as needed
-  const protectedPaths = ['/dashboard', '/profile'];
-  const isProtectedPath = protectedPaths.some(path => req.nextUrl.pathname.startsWith(path));
-
-  if (!isAuthenticated && isProtectedPath) {
+  // If user is not authenticated and trying to access protected routes, redirect to login
+  if (!isAuthenticated && !isPublicPath) {
     const loginUrl = new URL('/login', req.url);
-    loginUrl.searchParams.set('callbackUrl', req.nextUrl.pathname);
+    loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);
   }
 

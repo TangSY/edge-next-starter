@@ -13,6 +13,8 @@ export default auth(req => {
   // Define public routes that don't require authentication
   const publicPaths = [
     '/', // Home page
+    '/privacy', // Privacy policy page
+    '/terms', // Terms of service page
     '/login', // Login page
     '/register', // Register page
     '/api/auth', // NextAuth API routes

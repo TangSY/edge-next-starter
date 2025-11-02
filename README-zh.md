@@ -2,6 +2,22 @@
 
 ---
 
+<div align="center">
+
+![Next.js](https://img.shields.io/badge/Next.js-15.5.2-black?style=flat&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue?style=flat&logo=typescript)
+![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=flat&logo=react)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?style=flat&logo=tailwind-css)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=flat&logo=cloudflare)
+![Prisma](https://img.shields.io/badge/Prisma-6.17.1-2D3748?style=flat&logo=prisma)
+![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?style=flat&logo=node.js)
+![pnpm](https://img.shields.io/badge/pnpm-8.15.0-F69220?style=flat&logo=pnpm)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat)
+
+</div>
+
+---
+
 # Next.js + Cloudflare 全栈模板
 
 一个开箱即用的 Next.js + Cloudflare 全栈项目模板，集成 Edge Runtime、D1 数据库、R2 存储、Analytics Engine 事件分析和完整的 CI/CD 流程。

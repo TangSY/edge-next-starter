@@ -48,7 +48,7 @@
     "workers"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,md}": "prettier --write"
   },

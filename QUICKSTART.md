@@ -184,8 +184,10 @@ Run migrations:
 ```bash
 pnpm run db:migrate:local
 ```
+
 ### BUG: Received structured exception #0xc0000005: access violation; Windows
-Need update VC Runtime 2015-2022:   [VC runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+
+Need update VC Runtime 2015-2022: [VC runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 reference: [BUG: Received structured exception #0xc0000005: access violation;](https://github.com/cloudflare/workers-sdk/issues/6170#issuecomment-2245209918)
 
 ## 📚 Next steps

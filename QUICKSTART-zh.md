@@ -184,8 +184,10 @@ pnpm install
 ```bash
 pnpm run db:migrate:local
 ```
+
 ### BUG: Received structured exception #0xc0000005: access violation; Windows
-需要更新VC++2015-2022 运行时:   [VC runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+
+需要更新VC++2015-2022 运行时: [VC runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 参考: [BUG: Received structured exception #0xc0000005: access violation;](https://github.com/cloudflare/workers-sdk/issues/6170#issuecomment-2245209918)
 
 ## 📚 下一步

@@ -47,6 +47,22 @@ cp .env.local.example .env.local
 cp .dev.vars.example .dev.vars
 ```
 
+**IMPORTANT**: Edit `.env.local` and set a secure `NEXTAUTH_SECRET`:
+
+```bash
+# Generate a secure random secret (run in terminal)
+openssl rand -base64 32
+```
+
+Copy the output and replace `NEXTAUTH_SECRET=dev-secret` in `.env.local` with the generated value.
+
+> **Security Warning**:
+>
+> - **NEVER** use `dev-secret` in production
+> - `NEXTAUTH_SECRET` must be a strong random string (minimum 32 characters)
+> - If not set properly, authentication will fail with internal server errors
+> - Each environment (dev/test/prod) should have a different secret
+
 ### 6. Login to Cloudflare
 
 ```bash

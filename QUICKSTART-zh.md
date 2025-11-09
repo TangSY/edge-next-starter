@@ -47,6 +47,22 @@ cp .env.local.example .env.local
 cp .dev.vars.example .dev.vars
 ```
 
+**重要提示**：编辑 `.env.local` 文件，设置安全的 `NEXTAUTH_SECRET`：
+
+```bash
+# 生成安全的随机密钥（在终端中运行）
+openssl rand -base64 32
+```
+
+将生成的输出复制，替换 `.env.local` 中的 `NEXTAUTH_SECRET=dev-secret`。
+
+> **安全警告**：
+>
+> - **绝对不要**在生产环境使用 `dev-secret`
+> - `NEXTAUTH_SECRET` 必须是强随机字符串（最少 32 个字符）
+> - 如果设置不当，认证功能会失败并返回内部服务器错误
+> - 每个环境（开发/测试/生产）应使用不同的密钥
+
 ### 6. 登录 Cloudflare
 
 ```bash

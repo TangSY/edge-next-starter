@@ -1,7 +1,12 @@
 # Cloudflare Pages local dev bindings (used by `wrangler pages dev`)
 # Copy to `.dev.vars` for local Cloudflare dev server.
 
-# Set a non-default secret for session security when possible
+# ⚠️ SECURITY WARNING:
+#   - Generate a secure secret: openssl rand -base64 32
+#   - NEVER use 'dev-secret' in production
+#   - Minimum 32 characters required
+#   - Authentication will fail with internal server errors if not set properly
+#   - Use different secrets for dev/test/prod environments
 NEXTAUTH_SECRET=dev-secret
 
 # Optional: Google OAuth (set both together)

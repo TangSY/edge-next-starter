@@ -7,7 +7,12 @@
 #   - Minimum 32 characters required
 #   - Authentication will fail with internal server errors if not set properly
 #   - Use different secrets for dev/test/prod environments
-NEXTAUTH_SECRET=dev-secret
+
+# NextAuth Configuration (for wrangler dev on port 8788)
+# Note: NextAuth v5 supports both AUTH_* and NEXTAUTH_* naming
+AUTH_SECRET=dev-secret
+AUTH_URL=http://localhost:8788
+AUTH_TRUST_HOST=true
 
 # Optional: Google OAuth (set both together)
 GOOGLE_CLIENT_ID=

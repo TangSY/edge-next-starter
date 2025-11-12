@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { UploadService, type UploadResult } from '@/services';
 import { ApiError } from '@/lib/http';
 
@@ -20,7 +21,9 @@ export default function UploadPage() {
   const [result, setResult] = useState<UploadResult | null>(null);
   const [results, setResults] = useState<UploadResult[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthError, setIsAuthError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
 
   async function handleUpload() {
     if (!files || files.length === 0) {
@@ -30,6 +33,7 @@ export default function UploadPage() {
     setIsUploading(true);
     setError(null);
     setResult(null);
+    setIsAuthError(false);
 
     try {
       if (files.length === 1) {
@@ -45,14 +49,28 @@ export default function UploadPage() {
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (e: unknown) {
       if (e instanceof ApiError) {
-        setError(e.message);
+        // Check if it's an authentication error (401)
+        if (e.statusCode === 401) {
+          setError(e.message);
+          setIsAuthError(true);
+        } else {
+          setError(e.message);
+          setIsAuthError(false);
+        }
       } else {
         const message = e instanceof Error ? e.message : 'Upload failed';
         setError(message);
+        setIsAuthError(false);
       }
     } finally {
       setIsUploading(false);
     }
+  }
+
+  function handleLoginRedirect() {
+    // Redirect to login page with callback URL
+    const callbackUrl = encodeURIComponent('/upload');
+    router.push(`/login?callbackUrl=${callbackUrl}`);
   }
 
   return (
@@ -82,7 +100,19 @@ export default function UploadPage() {
           </Button>
 
           {error && (
-            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">{error}</div>
+            <div className="rounded-md bg-destructive/15 p-4 space-y-3">
+              <div className="text-sm text-destructive">{error}</div>
+              {isAuthError && (
+                <Button
+                  onClick={handleLoginRedirect}
+                  variant="default"
+                  size="sm"
+                  className="w-full"
+                >
+                  Go to Login
+                </Button>
+              )}
+            </div>
           )}
 
           {result && (
